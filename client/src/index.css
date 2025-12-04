@@ -1,0 +1,464 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  transition: background-color 0.3s ease;
+}
+
+/* 深色主题 */
+[data-theme="dark"] body {
+  background: linear-gradient(135deg, #0A1428 0%, #1a1a2e 100%);
+}
+
+/* 浅色主题 - 白色 */
+[data-theme="light-white"] body {
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+/* 主题相关样式类 */
+.theme-bg {
+  transition: background 0.3s ease;
+}
+
+[data-theme="dark"] .theme-bg {
+  background: linear-gradient(135deg, #0A1428 0%, #1a1a2e 100%);
+}
+
+[data-theme="light-white"] .theme-bg {
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+}
+
+[data-theme="light-purple"] .theme-bg {
+  background: linear-gradient(135deg, #E6E0FF 0%, #F5F0FF 100%);
+}
+
+/* Navbar */
+.theme-nav {
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-nav {
+  background-color: #0A1428;
+}
+
+[data-theme="light-white"] .theme-nav {
+  background-color: #ffffff;
+  border-color: #C9AA71;
+}
+
+
+.theme-nav-link {
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-nav-link {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .theme-nav-link:hover {
+  color: #ffffff;
+}
+
+[data-theme="light-white"] .theme-nav-link {
+  color: #4b5563;
+}
+
+[data-theme="light-white"] .theme-nav-link:hover {
+  color: #1f2937;
+}
+
+
+/* Dropdown */
+.theme-dropdown {
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-dropdown {
+  background-color: #1f2937;
+  border-color: rgba(201, 170, 113, 0.3);
+}
+
+[data-theme="light-white"] .theme-dropdown {
+  background-color: #ffffff;
+  border-color: rgba(201, 170, 113, 0.3);
+}
+
+
+.theme-dropdown-item {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-dropdown-item {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .theme-dropdown-item:hover {
+  background-color: #374151;
+  color: #ffffff;
+}
+
+[data-theme="light-white"] .theme-dropdown-item {
+  color: #4b5563;
+}
+
+[data-theme="light-white"] .theme-dropdown-item:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+
+/* Buttons */
+.theme-button {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-button {
+  background-color: #374151;
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .theme-button:hover {
+  background-color: #4b5563;
+}
+
+[data-theme="light-white"] .theme-button {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+[data-theme="light-white"] .theme-button:hover {
+  background-color: #d1d5db;
+}
+
+
+/* Avatar background */
+.theme-avatar-bg {
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-avatar-bg {
+  background-color: #374151;
+}
+
+[data-theme="light-white"] .theme-avatar-bg {
+  background-color: #e5e7eb;
+}
+
+
+/* Card backgrounds */
+.theme-card {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-card {
+  background-color: rgba(31, 41, 55, 0.5);
+  border-color: rgba(201, 170, 113, 0.2);
+}
+
+[data-theme="dark"] .theme-card:hover {
+  background-color: #1f2937;
+  border-color: rgba(201, 170, 113, 0.4);
+}
+
+[data-theme="light-white"] .theme-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(201, 170, 113, 0.2);
+}
+
+[data-theme="light-white"] .theme-card:hover {
+  background-color: #ffffff;
+  border-color: rgba(201, 170, 113, 0.4);
+}
+
+
+/* Text colors */
+.theme-text-primary {
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-text-primary {
+  color: #ffffff;
+}
+
+[data-theme="light-white"] .theme-text-primary {
+  color: #4b5563;
+}
+
+
+.theme-text-secondary {
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-text-secondary {
+  color: #9ca3af;
+}
+
+[data-theme="light-white"] .theme-text-secondary {
+  color: #6b7280;
+}
+
+
+.theme-text-muted {
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-text-muted {
+  color: #6b7280;
+}
+
+[data-theme="light-white"] .theme-text-muted {
+  color: #9ca3af;
+}
+
+
+/* Card hover effect */
+.theme-card-hover {
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-card-hover:hover {
+  background-color: rgba(55, 65, 81, 0.5);
+}
+
+[data-theme="light-white"] .theme-card-hover:hover {
+  background-color: rgba(243, 244, 246, 0.8);
+}
+
+
+/* Input fields */
+.theme-input {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-input {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .theme-input:focus {
+  border-color: #C9AA71;
+  outline: none;
+}
+
+[data-theme="light-white"] .theme-input {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+  color: #1f2937;
+}
+
+[data-theme="light-white"] .theme-input:focus {
+  border-color: #C9AA71;
+  outline: none;
+}
+
+/* 文件输入框按钮文字颜色 */
+[data-theme="light-white"] .theme-input::file-selector-button {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .theme-input::file-selector-button {
+  color: #0A1428 !important;
+}
+
+
+/* Form labels */
+.theme-label {
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-label {
+  color: #d1d5db;
+}
+
+[data-theme="light-white"] .theme-label {
+  color: #4b5563;
+}
+
+/* ReactQuill 富文本编辑器全局样式 */
+[data-theme="dark"] .quill {
+  background-color: #374151;
+}
+
+[data-theme="light-white"] .quill {
+  background-color: #f3f4f6;
+}
+
+[data-theme="dark"] .ql-container {
+  background-color: #374151;
+  color: white;
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+[data-theme="light-white"] .ql-container {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+}
+
+[data-theme="dark"] .ql-editor {
+  color: #E5E7EB !important;
+  min-height: 200px;
+}
+
+[data-theme="light-white"] .ql-editor {
+  color: #1f2937 !important;
+  min-height: 200px;
+}
+
+[data-theme="dark"] .ql-editor p {
+  color: #E5E7EB !important;
+}
+
+[data-theme="light-white"] .ql-editor p {
+  color: #1f2937 !important;
+}
+
+[data-theme="dark"] .ql-editor.ql-blank::before {
+  color: #9CA3AF;
+}
+
+[data-theme="light-white"] .ql-editor.ql-blank::before {
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .ql-toolbar {
+  background-color: #4B5563;
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+  border-bottom: 1px solid #4B5563;
+}
+
+[data-theme="light-white"] .ql-toolbar {
+  background-color: #e5e7eb;
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+  border-bottom: 1px solid #d1d5db;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-stroke {
+  stroke: white;
+}
+
+[data-theme="light-white"] .ql-toolbar .ql-stroke {
+  stroke: #1f2937;
+}
+
+[data-theme="dark"] .ql-toolbar .ql-fill {
+  fill: white;
+}
+
+[data-theme="light-white"] .ql-toolbar .ql-fill {
+  fill: #1f2937;
+}
+
+.ql-toolbar button:hover,
+.ql-toolbar button.ql-active {
+  color: #FCD34D;
+}
+
+.ql-editor strong {
+  color: #FCD34D !important;
+}
+
+[data-theme="dark"] .ql-picker-label {
+  color: white !important;
+}
+
+[data-theme="light-white"] .ql-picker-label {
+  color: #1f2937 !important;
+}
+
+[data-theme="dark"] .ql-picker-options {
+  background-color: #4B5563 !important;
+  border: 1px solid #6B7280 !important;
+}
+
+[data-theme="light-white"] .ql-picker-options {
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+}
+
+[data-theme="dark"] .ql-picker-item {
+  color: white !important;
+}
+
+[data-theme="light-white"] .ql-picker-item {
+  color: #1f2937 !important;
+}
+
+[data-theme="dark"] .ql-picker-item:hover {
+  background-color: #6B7280 !important;
+}
+
+[data-theme="light-white"] .ql-picker-item:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.ql-picker-item.ql-selected {
+  background-color: #FCD34D !important;
+  color: #1F2937 !important;
+}
+
+/* 金色按钮文字颜色 - 浅色模式下使用白色 */
+[data-theme="light-white"] .bg-runeterra-gold.text-runeterra-dark,
+[data-theme="light-white"] button.bg-runeterra-gold,
+[data-theme="light-white"] a.bg-runeterra-gold,
+[data-theme="light-white"] span.bg-runeterra-gold {
+  color: #ffffff !important;
+}
+
+/* 深色模式保持原样 */
+[data-theme="dark"] .bg-runeterra-gold.text-runeterra-dark {
+  color: #0A1428 !important;
+}
+
+/* Alert messages */
+.theme-alert-error {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-alert-error {
+  background-color: rgba(127, 29, 29, 0.5);
+  border-color: #ef4444;
+  color: #fecaca;
+}
+
+[data-theme="light-white"] .theme-alert-error {
+  background-color: rgba(254, 226, 226, 0.8);
+  border-color: #ef4444;
+  color: #991b1b;
+}
+
+.theme-alert-success {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .theme-alert-success {
+  background-color: rgba(20, 83, 45, 0.5);
+  border-color: #22c55e;
+  color: #bbf7d0;
+}
+
+[data-theme="light-white"] .theme-alert-success {
+  background-color: rgba(220, 252, 231, 0.8);
+  border-color: #22c55e;
+  color: #166534;
+}
+
+

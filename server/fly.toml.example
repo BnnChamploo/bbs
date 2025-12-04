@@ -1,0 +1,37 @@
+# Fly.io 部署配置文件示例
+# 复制此文件为 fly.toml 并修改 app 名称为你的应用名称
+
+app = "runeterra-bbs"
+primary_region = "hkg"  # 选择离你最近的区域
+
+[build]
+
+[env]
+  PORT = "3001"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/api/categories"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
+
+[files]
+  # 持久化存储配置（用于数据库和上传文件）
+  [files.volumes]
+    data = "/data"
+

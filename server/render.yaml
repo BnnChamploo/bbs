@@ -1,0 +1,18 @@
+# Render 部署配置文件
+
+services:
+  - type: web
+    name: runeterra-backend
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+    healthCheckPath: /api/categories
+
