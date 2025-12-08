@@ -187,13 +187,6 @@ const Navbar = ({ user, onLogout }) => {
           <div className="flex items-center space-x-4 md:space-x-8">
             <Link 
               to="/" 
-              onClick={(e) => {
-                e.preventDefault();
-                // 使用 navigate 导航到首页，确保包含 base path
-                const basePath = import.meta.env.BASE_URL || '/bbs/';
-                const targetPath = basePath === '/' ? '/' : basePath.slice(0, -1); // 移除末尾的 /
-                navigate(targetPath, { replace: true });
-              }}
               className="flex items-center space-x-1 md:space-x-2"
             >
               <span className="text-lg md:text-2xl font-bold text-runeterra-gold font-runeterra">
@@ -220,7 +213,7 @@ const Navbar = ({ user, onLogout }) => {
                   onMouseLeave={handleMouseLeave}
                 >
                   <Link
-                    to={`/?category=${cat.value}`}
+                    to={`?category=${cat.value}`}
                     className={`px-5 py-2 text-base font-medium transition-colors ${
                       isActive(cat.value)
                         ? 'text-runeterra-gold'
@@ -235,7 +228,7 @@ const Navbar = ({ user, onLogout }) => {
                       {cat.subcategories.map((subCat, subIndex) => (
                         <Link
                           key={`subcat-${subCat.value}-${subIndex}`}
-                          to={`/?category=${subCat.value}`}
+                          to={`?category=${subCat.value}`}
                           className={`block px-4 py-2 text-sm transition-colors ${
                             location.search.includes(`category=${subCat.value}`)
                               ? 'bg-runeterra-gold/20 text-runeterra-gold'
@@ -370,7 +363,7 @@ const Navbar = ({ user, onLogout }) => {
               {categories.map((cat, index) => (
                 <div key={`mobile-cat-${cat.value || 'plaza'}-${index}`}>
                   <Link
-                    to={`/?category=${cat.value}`}
+                    to={`?category=${cat.value}`}
                     onClick={() => setShowMobileMenu(false)}
                     className={`block px-4 py-2 rounded-md transition-colors ${
                       isActive(cat.value)
@@ -385,7 +378,7 @@ const Navbar = ({ user, onLogout }) => {
                       {cat.subcategories.map((subCat, subIndex) => (
                         <Link
                           key={`mobile-subcat-${subCat.value}-${subIndex}`}
-                          to={`/?category=${subCat.value}`}
+                          to={`?category=${subCat.value}`}
                           onClick={() => setShowMobileMenu(false)}
                           className={`block px-4 py-2 rounded-md text-sm transition-colors ${
                             location.search.includes(`category=${subCat.value}`)

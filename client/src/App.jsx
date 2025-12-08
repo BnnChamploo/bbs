@@ -63,9 +63,13 @@ function App() {
     );
   }
 
+  // 获取 base path（GitHub Pages 使用 /bbs/）
+  const basePath = import.meta.env.BASE_URL || '/bbs/';
+  const basename = basePath === '/' ? '/' : basePath.slice(0, -1); // 移除末尾的 /
+
   return (
     <ThemeProvider>
-      <Router>
+      <Router basename={basename}>
         <div className="min-h-screen theme-bg">
           <Navbar user={user} onLogout={handleLogout} />
           <Routes>
