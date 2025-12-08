@@ -11,6 +11,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   transition: background-color 0.3s ease;
+  /* 移动端优化 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 移动端字体大小优化 */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* 移动端触摸优化 */
+button, a, input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 移动端输入框优化 */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px; /* 防止 iOS 自动缩放 */
+  }
 }
 
 /* 深色主题 */

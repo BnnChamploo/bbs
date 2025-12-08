@@ -261,14 +261,14 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="border-b border-gray-700 pb-4 mb-4 last:border-0">
-      <div className="flex items-start space-x-3">
-        <div className="relative w-10 h-10 flex-shrink-0">
+    <div ref={setNodeRef} style={style} className="border-b border-gray-700 pb-3 md:pb-4 mb-3 md:mb-4 last:border-0">
+      <div className="flex items-start space-x-2 md:space-x-3">
+        <div className="relative w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
           {getAvatarUrl(reply.avatar) ? (
             <img
               src={getAvatarUrl(reply.avatar)}
               alt={reply.username}
-              className="w-10 h-10 rounded-full border border-runeterra-gold theme-avatar-bg object-cover"
+              className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-runeterra-gold theme-avatar-bg object-cover"
               onError={(e) => {
                 e.target.style.display = 'none';
                 const fallback = e.target.nextElementSibling;
@@ -276,49 +276,49 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
               }}
             />
           ) : null}
-          <div className={`absolute inset-0 w-10 h-10 rounded-full border border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-sm font-bold ${getAvatarUrl(reply.avatar) ? 'hidden' : ''}`}>
+          <div className={`absolute inset-0 w-8 h-8 md:w-10 md:h-10 rounded-full border border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-xs md:text-sm font-bold ${getAvatarUrl(reply.avatar) ? 'hidden' : ''}`}>
             {reply.username?.[0]?.toUpperCase() || '?'}
           </div>
         </div>
-        <div className="flex-1">
-          <div className="flex items-center flex-wrap gap-2 mb-1">
-            <span className="text-sm theme-text-muted">#{reply.floor_number || index + 1}</span>
-            <span className="text-runeterra-gold font-medium">{reply.username || '匿名用户'}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center flex-wrap gap-1 md:gap-2 mb-1">
+            <span className="text-xs md:text-sm theme-text-muted">#{reply.floor_number || index + 1}</span>
+            <span className="text-xs md:text-sm text-runeterra-gold font-medium">{reply.username || '匿名用户'}</span>
             {reply.user_title && (
-              <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-2 py-1 rounded">
+              <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 md:px-2 py-0.5 md:py-1 rounded hidden sm:inline">
                 {reply.user_title}
               </span>
             )}
             {reply.user_identity && (
-              <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-2 py-1 rounded">
+              <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-1 md:px-2 py-0.5 md:py-1 rounded hidden sm:inline">
                 {reply.user_identity}
               </span>
             )}
             <span className="text-xs text-runeterra-gold">{reply.rank || '坚韧黑铁'}</span>
-            <span className="theme-text-secondary">|</span>
-            <span className="text-sm theme-text-secondary">发布于{formatRuneterraTime(reply.created_at, reply.custom_time)}</span>
-            {reply.region && <><span className="theme-text-secondary"> | </span><span className="text-sm theme-text-secondary">来自 {reply.region}</span></>}
+            <span className="theme-text-secondary hidden sm:inline">|</span>
+            <span className="text-xs md:text-sm theme-text-secondary whitespace-nowrap">发布于{formatRuneterraTime(reply.created_at, reply.custom_time)}</span>
+            {reply.region && <><span className="theme-text-secondary hidden sm:inline"> | </span><span className="text-xs md:text-sm theme-text-secondary whitespace-nowrap">来自 {reply.region}</span></>}
             {isEditMode && (
               <>
-                <span className="text-gray-400"> | </span>
+                <span className="text-gray-400 hidden sm:inline"> | </span>
                 <input
                   type="number"
                   value={reply.likes || 0}
                   onChange={(e) => onEdit(reply.id, { likes: parseInt(e.target.value) || 0 })}
-                  className="w-16 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-sm"
+                  className="w-12 md:w-16 px-1 md:px-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-xs md:text-sm"
                   min="0"
                 />
-                <span className="text-xs text-gray-500">点赞</span>
+                <span className="text-xs text-gray-500 hidden sm:inline">点赞</span>
               </>
             )}
             {!isEditMode && (
               <>
-                <span className="text-gray-400"> | </span>
-                <span className="text-sm text-gray-400">点赞({reply.likes || 0})</span>
+                <span className="text-gray-400 hidden sm:inline"> | </span>
+                <span className="text-xs md:text-sm text-gray-400 whitespace-nowrap">点赞({reply.likes || 0})</span>
               </>
             )}
           </div>
-          <div className="theme-text-primary mb-2" dangerouslySetInnerHTML={{ __html: reply.content }} />
+          <div className="theme-text-primary mb-2 text-sm md:text-base" dangerouslySetInnerHTML={{ __html: reply.content }} />
           {reply.images && reply.images.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {reply.images.map((img, idx) => {
@@ -328,7 +328,7 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
                     key={idx}
                     src={imageUrl}
                     alt={`回复图片${idx + 1}`}
-                    className="max-w-xs rounded"
+                    className="max-w-full sm:max-w-xs rounded"
                     onError={(e) => {
                       e.target.style.display = 'none';
                     }}
@@ -615,18 +615,18 @@ const PostDetail = ({ user }) => {
   const displayReplies = isEditMode ? editingReplies : replies;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <Link to="/" className="inline-block mb-4 text-runeterra-gold hover:underline">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-4 py-4 md:py-8">
+      <Link to="/" className="inline-block mb-3 md:mb-4 text-runeterra-gold hover:underline text-sm md:text-base">
         ← 返回首页
       </Link>
 
       {isEditMode && (
-        <div className="mb-4 p-4 bg-runeterra-purple/20 border border-runeterra-purple rounded-lg">
-          <div className="flex items-center justify-between">
-            <span className="text-runeterra-purple font-bold">编辑模式</span>
+        <div className="mb-3 md:mb-4 p-3 md:p-4 bg-runeterra-purple/20 border border-runeterra-purple rounded-lg">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <span className="text-runeterra-purple font-bold text-sm md:text-base">编辑模式</span>
             <button
               onClick={handleSaveAll}
-              className="px-4 py-2 bg-runeterra-gold text-runeterra-dark rounded-md hover:bg-yellow-600 transition-colors font-medium"
+              className="px-3 md:px-4 py-2 bg-runeterra-gold text-runeterra-dark rounded-md hover:bg-yellow-600 transition-colors font-medium text-sm md:text-base w-full sm:w-auto"
             >
               保存所有更改
             </button>
@@ -634,7 +634,7 @@ const PostDetail = ({ user }) => {
         </div>
       )}
 
-      <article className="theme-card rounded-lg p-8 border border-runeterra-gold/20 mb-6">
+      <article className="theme-card rounded-lg p-4 md:p-6 lg:p-8 border border-runeterra-gold/20 mb-4 md:mb-6">
         {isEditMode ? (
           <div className="space-y-4">
             <div>
@@ -646,13 +646,13 @@ const PostDetail = ({ user }) => {
                 className="w-full px-4 py-2 theme-input rounded-md"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <div>
-                <label className="block theme-label mb-2 font-medium">用户</label>
+                <label className="block theme-label mb-2 font-medium text-sm md:text-base">用户</label>
                 <select
                   value={editingPost.user_id || ''}
                   onChange={(e) => setEditingPost({ ...editingPost, user_id: parseInt(e.target.value) || null })}
-                  className="w-full px-4 py-2 theme-input rounded-md"
+                  className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
                 >
                   <option value="">匿名</option>
                   {users.map(u => (
@@ -661,7 +661,7 @@ const PostDetail = ({ user }) => {
                 </select>
               </div>
               <div>
-                <label className="block theme-label mb-2 font-medium">匿名</label>
+                <label className="block theme-label mb-2 font-medium text-sm md:text-base">匿名</label>
                 <input
                   type="checkbox"
                   checked={editingPost.is_anonymous === 1 || editingPost.is_anonymous === true}
@@ -800,15 +800,15 @@ const PostDetail = ({ user }) => {
                 {getCategoryName(post.category)}
               </span>
             </div>
-            <h1 className="text-3xl font-bold theme-text-primary mb-4">{post.title}</h1>
-            <div className="flex items-center flex-wrap gap-2 mb-4 text-sm">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold theme-text-primary mb-3 md:mb-4">{post.title}</h1>
+            <div className="flex items-center flex-wrap gap-2 mb-3 md:mb-4 text-xs sm:text-sm">
               <div className="flex items-center space-x-2">
-                <div className="relative w-8 h-8">
+                <div className="relative w-6 h-6 md:w-8 md:h-8">
                   {getAvatarUrl(post.avatar) ? (
                     <img
                       src={getAvatarUrl(post.avatar)}
                       alt={post.username}
-                      className="w-8 h-8 rounded-full border border-runeterra-gold bg-gray-700 object-cover"
+                      className="w-6 h-6 md:w-8 md:h-8 rounded-full border border-runeterra-gold bg-gray-700 object-cover"
                       onError={(e) => {
                         e.target.style.display = 'none';
                         const fallback = e.target.nextElementSibling;
@@ -816,38 +816,38 @@ const PostDetail = ({ user }) => {
                       }}
                     />
                   ) : null}
-                  <div className={`absolute inset-0 w-8 h-8 rounded-full border border-runeterra-gold bg-gray-700 flex items-center justify-center text-runeterra-gold text-xs font-bold ${getAvatarUrl(post.avatar) ? 'hidden' : ''}`}>
+                  <div className={`absolute inset-0 w-6 h-6 md:w-8 md:h-8 rounded-full border border-runeterra-gold bg-gray-700 flex items-center justify-center text-runeterra-gold text-xs font-bold ${getAvatarUrl(post.avatar) ? 'hidden' : ''}`}>
                     {post.username?.[0]?.toUpperCase() || '?'}
                   </div>
                 </div>
                 <span className="text-runeterra-gold">{post.username || '匿名用户'}</span>
                 {post.user_title && (
-                  <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-2 py-1 rounded">
+                  <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 md:px-2 py-0.5 md:py-1 rounded hidden sm:inline">
                     {post.user_title}
                   </span>
                 )}
                 {post.user_identity && (
-                  <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-2 py-1 rounded">
+                  <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-1 md:px-2 py-0.5 md:py-1 rounded hidden sm:inline">
                     {post.user_identity}
                   </span>
                 )}
                 <span className="text-xs text-runeterra-gold">{post.rank || '坚韧黑铁'}</span>
               </div>
-              <span className="text-gray-400">|</span>
-              <span className="text-gray-400">发布于{formatRuneterraTime(post.created_at, post.custom_time)}</span>
-              {post.region && <><span className="text-gray-400"> | </span><span className="text-gray-400">来自 {post.region}</span></>}
-              <span className="text-gray-400"> | </span>
-              <span className="text-gray-400">浏览量({post.views || 0})</span>
-              <span className="text-gray-400"> | </span>
-              <span className="text-gray-400">评论({replies.length})</span>
-              <span className="text-gray-400"> | </span>
-              <span className="text-gray-400">收藏({post.likes || 0})</span>
+              <span className="text-gray-400 hidden sm:inline">|</span>
+              <span className="text-gray-400 whitespace-nowrap">发布于{formatRuneterraTime(post.created_at, post.custom_time)}</span>
+              {post.region && <><span className="text-gray-400 hidden sm:inline"> | </span><span className="text-gray-400 whitespace-nowrap">来自 {post.region}</span></>}
+              <span className="text-gray-400 hidden sm:inline"> | </span>
+              <span className="text-gray-400 whitespace-nowrap">浏览量({post.views || 0})</span>
+              <span className="text-gray-400 hidden sm:inline"> | </span>
+              <span className="text-gray-400 whitespace-nowrap">评论({replies.length})</span>
+              <span className="text-gray-400 hidden sm:inline"> | </span>
+              <span className="text-gray-400 whitespace-nowrap">收藏({post.likes || 0})</span>
             </div>
             <div className="prose prose-invert max-w-none mb-6">
               <div className="theme-text-primary leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
             </div>
             {post.images && post.images.length > 0 && (
-              <div className="flex flex-wrap gap-4 mb-6">
+              <div className="flex flex-wrap gap-2 md:gap-4 mb-4 md:mb-6">
                 {post.images.map((img, idx) => {
                   const imageUrl = getImageUrl(img);
                   return imageUrl ? (
@@ -855,7 +855,7 @@ const PostDetail = ({ user }) => {
                       key={idx}
                       src={imageUrl}
                       alt={`帖子图片${idx + 1}`}
-                      className="max-w-md rounded"
+                      className="max-w-full sm:max-w-md rounded"
                       onError={(e) => {
                         e.target.style.display = 'none';
                       }}
@@ -868,13 +868,13 @@ const PostDetail = ({ user }) => {
         )}
       </article>
 
-      <div className="theme-card rounded-lg p-6 border border-runeterra-gold/20 mb-6">
-        <h2 className="text-xl font-bold text-runeterra-gold mb-4">
+      <div className="theme-card rounded-lg p-4 md:p-6 border border-runeterra-gold/20 mb-4 md:mb-6">
+        <h2 className="text-lg md:text-xl font-bold text-runeterra-gold mb-3 md:mb-4">
           回复 ({displayReplies.length})
         </h2>
 
         {displayReplies.length === 0 ? (
-          <p className="theme-text-secondary text-center py-4">暂无回复</p>
+          <p className="theme-text-secondary text-center py-3 md:py-4 text-sm md:text-base">暂无回复</p>
         ) : (
           <DndContext
             sensors={sensors}
@@ -886,7 +886,7 @@ const PostDetail = ({ user }) => {
               items={displayReplies.map(r => r.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {displayReplies.map((reply, index) => (
                   <SortableReplyItem
                     key={reply.id}
@@ -917,7 +917,7 @@ const PostDetail = ({ user }) => {
       )}
 
       {user && (
-        <div className="mt-4">
+        <div className="mt-3 md:mt-4">
           <button
             onClick={async () => {
               if (!confirm('确定要删除这个帖子吗？此操作不可恢复！')) return;
@@ -930,7 +930,7 @@ const PostDetail = ({ user }) => {
                 alert('删除失败，请重试');
               }
             }}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            className="px-3 md:px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm md:text-base w-full sm:w-auto"
           >
             删除帖子
           </button>
@@ -1152,9 +1152,9 @@ const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
   };
 
   return (
-    <div className="theme-card rounded-lg p-6 border border-runeterra-gold/20">
-      <h3 className="text-lg font-bold text-runeterra-gold mb-4">发表回复</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="theme-card rounded-lg p-4 md:p-6 border border-runeterra-gold/20">
+      <h3 className="text-base md:text-lg font-bold text-runeterra-gold mb-3 md:mb-4">发表回复</h3>
+      <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
         <div className="theme-input rounded-md">
           <ReactQuill
             ref={quillRef}
@@ -1173,7 +1173,7 @@ const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
           />
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           <div>
             <label className="block theme-label mb-2 text-sm">回复人</label>
             <div className="space-y-2">
@@ -1385,7 +1385,7 @@ const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
         <button
           type="submit"
           disabled={submitting || !content.trim()}
-          className="px-4 py-2 bg-runeterra-gold text-runeterra-dark hover:bg-yellow-600 transition-colors font-medium rounded-md disabled:opacity-50"
+          className="w-full sm:w-auto px-4 py-2 bg-runeterra-gold text-runeterra-dark hover:bg-yellow-600 transition-colors font-medium rounded-md disabled:opacity-50 text-sm md:text-base"
         >
           {submitting ? '发布中...' : '发布回复'}
         </button>

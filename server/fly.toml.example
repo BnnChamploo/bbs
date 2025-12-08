@@ -35,3 +35,4 @@ primary_region = "hkg"  # 选择离你最近的区域
   [files.volumes]
     data = "/data"
 
+

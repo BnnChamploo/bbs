@@ -71,10 +71,10 @@ const Profile = ({ user, onUpdate }) => {
 
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-runeterra-gold mb-6">个人资料</h1>
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-4 py-4 md:py-8">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-runeterra-gold mb-4 md:mb-6">个人资料</h1>
 
-      <div className="theme-card rounded-lg p-8 border border-runeterra-gold/20">
+      <div className="theme-card rounded-lg p-4 md:p-6 lg:p-8 border border-runeterra-gold/20">
         {error && (
           <div className="mb-4 p-3 theme-alert-error rounded border">
             {error}
@@ -87,14 +87,14 @@ const Profile = ({ user, onUpdate }) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex items-center space-x-6">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
             <div className="relative">
               {(avatarPreview || getAvatarUrl(avatar)) ? (
                 <img
                   src={avatarPreview || getAvatarUrl(avatar)}
                   alt={username}
-                  className="w-24 h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg object-cover"
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg object-cover"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     const fallback = e.target.nextElementSibling;
@@ -102,13 +102,13 @@ const Profile = ({ user, onUpdate }) => {
                   }}
                 />
               ) : null}
-              <div className={`w-24 h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-2xl font-bold ${(avatarPreview || getAvatarUrl(avatar)) ? 'hidden' : ''}`}>
+              <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-xl md:text-2xl font-bold ${(avatarPreview || getAvatarUrl(avatar)) ? 'hidden' : ''}`}>
                 {username?.[0]?.toUpperCase() || '?'}
               </div>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-0 right-0 bg-runeterra-gold text-runeterra-dark rounded-full p-2 hover:bg-yellow-600 transition-colors"
+                className="absolute bottom-0 right-0 bg-runeterra-gold text-runeterra-dark rounded-full p-1.5 md:p-2 hover:bg-yellow-600 transition-colors text-sm md:text-base"
               >
                 📷
               </button>
@@ -136,11 +136,11 @@ const Profile = ({ user, onUpdate }) => {
                 }}
               />
             </div>
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold theme-text-primary mb-2">{username}</h2>
+            <div className="flex-1 text-center sm:text-left">
+              <h2 className="text-xl md:text-2xl font-bold theme-text-primary mb-2">{username}</h2>
               {user.rank && (
-                <div className="flex items-center space-x-4">
-                  <span className="px-3 py-1 bg-runeterra-blue text-white rounded text-sm">
+                <div className="flex items-center justify-center sm:justify-start space-x-4">
+                  <span className="px-2 md:px-3 py-1 bg-runeterra-blue text-white rounded text-xs md:text-sm">
                     {user.rank}
                   </span>
                 </div>
@@ -149,18 +149,18 @@ const Profile = ({ user, onUpdate }) => {
           </div>
 
           <div>
-            <label className="block theme-label mb-2 font-medium">用户名</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">用户名</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 theme-input rounded-md"
+              className="w-full px-3 md:px-4 py-2 md:py-3 theme-input rounded-md text-sm md:text-base"
               required
             />
-            <p className="mt-1 text-sm theme-text-muted">可以是英雄名字或符文大陆居民的名字</p>
+            <p className="mt-1 text-xs md:text-sm theme-text-muted">可以是英雄名字或符文大陆居民的名字</p>
           </div>
           <div>
-            <label className="block theme-label mb-2 font-medium">段位/外号</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">段位/外号</label>
             <input
               type="text"
               value={user.rank || ''}
@@ -169,46 +169,46 @@ const Profile = ({ user, onUpdate }) => {
                 onUpdate(updated);
               }}
               placeholder={user.identity === '英雄' ? '如：九尾妖狐、暗裔剑魔等' : '如：最强王者、璀璨钻石等'}
-              className="w-full px-4 py-3 theme-input rounded-md"
+              className="w-full px-3 md:px-4 py-2 md:py-3 theme-input rounded-md text-sm md:text-base"
             />
-            <p className="mt-1 text-sm theme-text-muted">
+            <p className="mt-1 text-xs md:text-sm theme-text-muted">
               {user.identity === '英雄' ? '英雄的外号（如：阿狸的外号是九尾妖狐）' : '召唤师的段位（如：最强王者、璀璨钻石等）'}
             </p>
           </div>
 
           <div>
-            <label className="block theme-label mb-2 font-medium">头像</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">头像</label>
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
-              className="w-full px-4 py-3 theme-input rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-runeterra-gold hover:file:bg-yellow-600"
+              className="w-full px-3 md:px-4 py-2 md:py-3 theme-input rounded-md file:mr-2 md:file:mr-4 file:py-1 md:file:py-2 file:px-2 md:file:px-4 file:rounded-md file:border-0 file:text-xs md:file:text-sm file:font-semibold file:bg-runeterra-gold hover:file:bg-yellow-600 text-sm md:text-base"
             />
-            <p className="mt-1 text-sm theme-text-muted">支持 jpg, png, gif, webp 格式，最大 5MB</p>
+            <p className="mt-1 text-xs md:text-sm theme-text-muted">支持 jpg, png, gif, webp 格式，最大 5MB</p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 pt-4 border-t border-runeterra-gold/20">
             <div className="text-center">
-              <div className="text-2xl font-bold text-runeterra-gold">{user.posts_count || 0}</div>
-              <div className="text-sm theme-text-secondary">发帖数</div>
+              <div className="text-xl md:text-2xl font-bold text-runeterra-gold">{user.posts_count || 0}</div>
+              <div className="text-xs md:text-sm theme-text-secondary">发帖数</div>
             </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-runeterra-gold text-runeterra-dark rounded-md hover:bg-yellow-600 transition-colors font-medium disabled:opacity-50"
+            className="w-full py-2 md:py-3 bg-runeterra-gold text-runeterra-dark rounded-md hover:bg-yellow-600 transition-colors font-medium disabled:opacity-50 text-sm md:text-base"
           >
             {loading ? '保存中...' : '保存更改'}
           </button>
         </form>
 
         {/* 数据管理区域 */}
-        <div className="mt-8 pt-8 border-t border-runeterra-gold/20">
-          <h3 className="text-lg font-bold theme-text-primary mb-4">数据管理</h3>
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
-            <div className="text-sm theme-text-secondary mb-2">当前数据统计：</div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div className="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-runeterra-gold/20">
+          <h3 className="text-base md:text-lg font-bold theme-text-primary mb-3 md:mb-4">数据管理</h3>
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 md:p-4 mb-3 md:mb-4">
+            <div className="text-xs md:text-sm theme-text-secondary mb-2">当前数据统计：</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-xs md:text-sm">
               <div>
                 <div className="font-semibold text-runeterra-gold">{dataStats.posts}</div>
                 <div className="theme-text-muted">帖子</div>
@@ -231,19 +231,19 @@ const Profile = ({ user, onUpdate }) => {
           {!showClearConfirm ? (
             <button
               onClick={() => setShowClearConfirm(true)}
-              className="w-full py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium"
+              className="w-full py-2 md:py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium text-sm md:text-base"
             >
               🗑️ 一键清除所有数据
             </button>
           ) : (
-            <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-700 rounded-lg p-4">
-              <div className="text-red-800 dark:text-red-200 font-semibold mb-2">
+            <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-700 rounded-lg p-3 md:p-4">
+              <div className="text-red-800 dark:text-red-200 font-semibold mb-2 text-sm md:text-base">
                 ⚠️ 警告：此操作不可恢复！
               </div>
-              <div className="text-sm text-red-700 dark:text-red-300 mb-4">
+              <div className="text-xs md:text-sm text-red-700 dark:text-red-300 mb-3 md:mb-4">
                 清除后，所有帖子、回复、点赞数据将被永久删除，但用户数据会保留。此操作仅清除本地数据，不会影响其他用户。
               </div>
-              <div className="flex space-x-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <button
                   onClick={() => {
                     clearPostsData();
@@ -258,13 +258,13 @@ const Profile = ({ user, onUpdate }) => {
                       window.location.href = '/';
                     }, 1500);
                   }}
-                  className="flex-1 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium"
+                  className="flex-1 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium text-sm md:text-base"
                 >
                   确认清除
                 </button>
                 <button
                   onClick={() => setShowClearConfirm(false)}
-                  className="flex-1 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors font-medium"
+                  className="flex-1 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors font-medium text-sm md:text-base"
                 >
                   取消
                 </button>

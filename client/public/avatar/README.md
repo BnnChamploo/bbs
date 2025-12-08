@@ -44,3 +44,4 @@ client/public/avatar/
 - 图片建议尺寸：200x200 像素或更大
 - 建议使用透明背景的 PNG 格式
 
+

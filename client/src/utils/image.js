@@ -30,3 +30,4 @@ export function getImageUrl(img) {
   return `http://localhost:3001/uploads/${img}`;
 }
 
+

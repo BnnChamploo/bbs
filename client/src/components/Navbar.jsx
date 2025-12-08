@@ -13,6 +13,7 @@ const Navbar = ({ user, onLogout }) => {
   const [allCategories, setAllCategories] = useState({});
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const timeoutRef = useRef(null);
   const themeMenuRef = useRef(null);
 
@@ -112,20 +113,29 @@ const Navbar = ({ user, onLogout }) => {
     <nav className="theme-nav border-b-2 border-runeterra-gold shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-4 md:space-x-8">
             <Link 
               to="/" 
               onClick={(e) => {
                 e.preventDefault();
                 navigate('/', { replace: true });
               }}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-1 md:space-x-2"
             >
-              <span className="text-2xl font-bold text-runeterra-gold font-runeterra">
+              <span className="text-lg md:text-2xl font-bold text-runeterra-gold font-runeterra">
                 班德尔密林
               </span>
-              <span className="text-sm text-gray-400">符文大陆里宇宙</span>
+              <span className="text-xs md:text-sm text-gray-400 hidden sm:inline">符文大陆里宇宙</span>
             </Link>
+            
+            {/* 移动端菜单按钮 */}
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="md:hidden px-2 py-1 theme-button rounded-md"
+              aria-label="菜单"
+            >
+              <span className="text-xl">☰</span>
+            </button>
             
             <div className="hidden md:flex items-center space-x-1">
               {categories.map((cat, index) => (
@@ -168,16 +178,16 @@ const Navbar = ({ user, onLogout }) => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {/* 主题切换按钮 */}
             <div className="relative" ref={themeMenuRef}>
               <button
                 onClick={() => setShowThemeMenu(!showThemeMenu)}
-                className="flex items-center space-x-1 px-3 py-2 theme-button rounded-md transition-colors"
+                className="flex items-center space-x-1 px-2 md:px-3 py-2 theme-button rounded-md transition-colors"
                 title="切换主题"
               >
                 <span className="text-lg">{getThemeIcon()}</span>
-                <span className="hidden md:inline text-sm">{getThemeName()}</span>
+                <span className="hidden lg:inline text-sm">{getThemeName()}</span>
               </button>
               {showThemeMenu && (
                 <div className="absolute right-0 top-full mt-1 theme-dropdown border border-runeterra-gold/30 rounded-md shadow-lg z-50 min-w-[120px]">
@@ -205,9 +215,10 @@ const Navbar = ({ user, onLogout }) => {
               <>
                 <Link
                   to="/create-post"
-                  className="px-4 py-2 bg-runeterra-gold text-runeterra-dark hover:bg-yellow-600 transition-colors font-medium rounded-md"
+                  className="px-3 md:px-4 py-2 bg-runeterra-gold text-runeterra-dark hover:bg-yellow-600 transition-colors font-medium rounded-md text-sm md:text-base"
                 >
-                  发帖
+                  <span className="hidden sm:inline">发帖</span>
+                  <span className="sm:hidden">✏️</span>
                 </Link>
                 <div className="relative group">
                   <Link
@@ -250,13 +261,14 @@ const Navbar = ({ user, onLogout }) => {
                     localStorage.setItem('editMode', (!isEditMode).toString());
                     window.location.reload();
                   }}
-                  className={`px-3 py-1 text-xs transition-colors rounded-md ml-4 ${
+                  className={`px-2 md:px-3 py-1 text-xs transition-colors rounded-md ml-2 md:ml-4 ${
                     localStorage.getItem('editMode') === 'true'
                       ? 'bg-runeterra-purple text-white'
                       : 'theme-button'
                   }`}
                 >
-                  {localStorage.getItem('editMode') === 'true' ? '编辑模式' : '展示模式'}
+                  <span className="hidden sm:inline">{localStorage.getItem('editMode') === 'true' ? '编辑模式' : '展示模式'}</span>
+                  <span className="sm:hidden">{localStorage.getItem('editMode') === 'true' ? '编辑' : '展示'}</span>
                 </button>
               </>
             ) : (
@@ -269,7 +281,7 @@ const Navbar = ({ user, onLogout }) => {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 bg-runeterra-purple text-white hover:bg-purple-600 transition-colors rounded-md"
+                  className="px-3 md:px-4 py-2 bg-runeterra-purple text-white hover:bg-purple-600 transition-colors rounded-md text-sm md:text-base"
                 >
                   注册
                 </Link>
@@ -277,6 +289,47 @@ const Navbar = ({ user, onLogout }) => {
             )}
           </div>
         </div>
+        
+        {/* 移动端菜单 */}
+        {showMobileMenu && (
+          <div className="md:hidden border-t border-runeterra-gold/20 theme-dropdown">
+            <div className="px-4 py-3 space-y-2">
+              {categories.map((cat, index) => (
+                <div key={`mobile-cat-${cat.value || 'plaza'}-${index}`}>
+                  <Link
+                    to={`/?category=${cat.value}`}
+                    onClick={() => setShowMobileMenu(false)}
+                    className={`block px-4 py-2 rounded-md transition-colors ${
+                      isActive(cat.value)
+                        ? 'bg-runeterra-gold/20 text-runeterra-gold'
+                        : 'theme-dropdown-item'
+                    }`}
+                  >
+                    {cat.name}
+                  </Link>
+                  {cat.subcategories && cat.subcategories.length > 0 && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {cat.subcategories.map((subCat, subIndex) => (
+                        <Link
+                          key={`mobile-subcat-${subCat.value}-${subIndex}`}
+                          to={`/?category=${subCat.value}`}
+                          onClick={() => setShowMobileMenu(false)}
+                          className={`block px-4 py-2 rounded-md text-sm transition-colors ${
+                            location.search.includes(`category=${subCat.value}`)
+                              ? 'bg-runeterra-gold/20 text-runeterra-gold'
+                              : 'theme-dropdown-item'
+                          }`}
+                        >
+                          {subCat.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

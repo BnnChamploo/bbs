@@ -257,33 +257,33 @@ const CreatePost = ({ user }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-runeterra-gold mb-6">发布新帖子</h1>
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-4 py-4 md:py-8">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-runeterra-gold mb-4 md:mb-6">发布新帖子</h1>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200">
+        <div className="mb-3 md:mb-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm md:text-base">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="theme-card rounded-lg p-8 border border-runeterra-gold/20">
-        <div className="mb-6">
-          <label className="block theme-label mb-2 font-medium">选择分类</label>
-          <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="theme-card rounded-lg p-4 md:p-6 lg:p-8 border border-runeterra-gold/20">
+        <div className="mb-4 md:mb-6">
+          <label className="block theme-label mb-2 font-medium text-sm md:text-base">选择分类</label>
+          <div className="space-y-3 md:space-y-4">
             {categories.map(cat => (
-              <div key={cat.value} className="border border-runeterra-gold/20 rounded-lg p-4 theme-card">
-                <div className="mb-3">
+              <div key={cat.value} className="border border-runeterra-gold/20 rounded-lg p-3 md:p-4 theme-card">
+                <div className="mb-2 md:mb-3">
                   <div className="flex items-center space-x-2">
-                    {cat.icon && <span className="text-lg">{cat.icon}</span>}
-                    <span className="font-medium theme-text-primary">{cat.label}</span>
+                    {cat.icon && <span className="text-base md:text-lg">{cat.icon}</span>}
+                    <span className="font-medium theme-text-primary text-sm md:text-base">{cat.label}</span>
                   </div>
-                  <p className="ml-6 text-sm theme-text-secondary">{cat.desc}</p>
+                  <p className="ml-4 md:ml-6 text-xs md:text-sm theme-text-secondary">{cat.desc}</p>
                   {cat.onlySubcategories && (
-                    <p className="ml-6 text-xs theme-text-muted mt-1">（请选择下方子板块）</p>
+                    <p className="ml-4 md:ml-6 text-xs theme-text-muted mt-1">（请选择下方子板块）</p>
                   )}
                 </div>
                 {cat.subcategories && cat.subcategories.length > 0 && (
-                  <div className="ml-6 mt-2 space-y-2">
+                  <div className="ml-4 md:ml-6 mt-2 space-y-2">
                     {cat.subcategories.map((subCat, subIndex) => {
                       // 从allCategories获取子板块的icon
                       const subCatData = allCategories[subCat.value];
@@ -291,7 +291,7 @@ const CreatePost = ({ user }) => {
                       return (
                         <div key={`${cat.value}-subcat-${subCat.value}-${subIndex}`} className="mb-2">
                           <label
-                            className={`cursor-pointer flex items-center space-x-2 text-sm ${
+                            className={`cursor-pointer flex items-center space-x-2 text-xs md:text-sm ${
                               category === subCat.value ? 'text-runeterra-gold' : 'theme-label'
                             }`}
                           >
@@ -315,20 +315,20 @@ const CreatePost = ({ user }) => {
           </div>
         </div>
 
-        <div className="mb-6">
-          <label className="block theme-label mb-2 font-medium">标题</label>
+        <div className="mb-4 md:mb-6">
+          <label className="block theme-label mb-2 font-medium text-sm md:text-base">标题</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="输入帖子标题..."
-            className="w-full px-4 py-3 theme-input rounded-md"
+            className="w-full px-3 md:px-4 py-2 md:py-3 theme-input rounded-md text-sm md:text-base"
             required
           />
         </div>
 
-        <div className="mb-6">
-          <label className="block theme-label mb-2 font-medium">内容</label>
+        <div className="mb-4 md:mb-6">
+          <label className="block theme-label mb-2 font-medium text-sm md:text-base">内容</label>
           <div className="theme-input rounded-md">
             <ReactQuill
               ref={quillRef}
@@ -457,14 +457,14 @@ const CreatePost = ({ user }) => {
           `}</style>
         </div>
 
-        <div className="mb-6 grid grid-cols-2 gap-4">
+        <div className="mb-4 md:mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           <div>
-            <label className="block theme-label mb-2 font-medium">发帖人</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">发帖人</label>
             <select
               value={selectedUserId}
               onChange={(e) => setSelectedUserId(e.target.value)}
               disabled={isAnonymous}
-              className="w-full px-4 py-2 theme-input rounded-md"
+              className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
             >
               <option value="">选择用户</option>
               {users.map(u => (
@@ -480,11 +480,11 @@ const CreatePost = ({ user }) => {
                 onChange={(e) => setIsAnonymous(e.target.checked)}
                 className="w-4 h-4"
               />
-              <span className="theme-label">匿名发帖</span>
+              <span className="theme-label text-sm md:text-base">匿名发帖</span>
             </label>
           </div>
           <div>
-            <label className="block theme-label mb-2 font-medium">时间（瓦罗兰历）</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">时间（瓦罗兰历）</label>
             <div className="space-y-2">
               <div className="flex gap-2">
                 <input
@@ -495,7 +495,7 @@ const CreatePost = ({ user }) => {
                     setCustomTimeYear(year);
                   }}
                   placeholder="年"
-                  className="flex-[1.2] px-4 py-2 theme-input rounded-md min-w-[100px]"
+                  className="flex-[1.2] px-2 md:px-4 py-2 theme-input rounded-md min-w-[60px] md:min-w-[100px] text-sm md:text-base"
                   min="1"
                 />
                 <input
@@ -510,7 +510,7 @@ const CreatePost = ({ user }) => {
                   placeholder="月（1-12）"
                   min="1"
                   max="12"
-                  className="flex-1 px-4 py-2 theme-input rounded-md min-w-[110px]"
+                  className="flex-1 px-2 md:px-4 py-2 theme-input rounded-md min-w-[70px] md:min-w-[110px] text-sm md:text-base"
                 />
                 <input
                   type="number"
@@ -524,7 +524,7 @@ const CreatePost = ({ user }) => {
                   placeholder="日（1-31）"
                   min="1"
                   max="31"
-                  className="flex-1 px-4 py-2 theme-input rounded-md min-w-[110px]"
+                  className="flex-1 px-2 md:px-4 py-2 theme-input rounded-md min-w-[70px] md:min-w-[110px] text-sm md:text-base"
                 />
               </div>
               <div className="flex gap-2">
@@ -540,7 +540,7 @@ const CreatePost = ({ user }) => {
                   placeholder="时（0-23）"
                   min="0"
                   max="23"
-                  className="flex-1 px-4 py-2 theme-input rounded-md"
+                  className="flex-1 px-2 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
                 />
                 <input
                   type="number"
@@ -554,12 +554,12 @@ const CreatePost = ({ user }) => {
                   placeholder="分（0-59）"
                   min="0"
                   max="59"
-                  className="flex-1 px-4 py-2 theme-input rounded-md"
+                  className="flex-1 px-2 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
                 />
               </div>
             </div>
             {customTimeYear && (
-              <p className="mt-1 text-xs theme-text-muted whitespace-nowrap">
+              <p className="mt-1 text-xs theme-text-muted break-words">
                 将显示为：瓦罗兰历 {(() => {
                   const yearNum = parseInt(customTimeYear);
                   const year = yearNum < 10 ? String(yearNum).padStart(2, '0') : String(customTimeYear);
@@ -573,11 +573,11 @@ const CreatePost = ({ user }) => {
             )}
           </div>
           <div>
-            <label className="block theme-label mb-2 font-medium">地区</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">地区</label>
             <select
               value={region}
               onChange={(e) => setRegion(e.target.value)}
-              className="w-full px-4 py-2 theme-input rounded-md h-[42px]"
+              className="w-full px-3 md:px-4 py-2 theme-input rounded-md h-[42px] text-sm md:text-base"
             >
               <option value="">选择地区</option>
               {regions.map(r => (
@@ -586,60 +586,60 @@ const CreatePost = ({ user }) => {
             </select>
           </div>
           <div>
-            <label className="block theme-label mb-2 font-medium">头衔</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">头衔</label>
             <input
               type="text"
               value={userTitle}
               onChange={(e) => setUserTitle(e.target.value)}
               placeholder="如：九尾妖狐"
-              className="w-full px-4 py-2 theme-input rounded-md h-[42px]"
+              className="w-full px-3 md:px-4 py-2 theme-input rounded-md h-[42px] text-sm md:text-base"
             />
           </div>
           <div>
-            <label className="block theme-label mb-2 font-medium">身份</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">身份</label>
             <input
               type="text"
               value={userIdentity}
               onChange={(e) => setUserIdentity(e.target.value)}
               placeholder="如：版主"
-              className="w-full px-4 py-2 theme-input rounded-md h-[42px]"
+              className="w-full px-3 md:px-4 py-2 theme-input rounded-md h-[42px] text-sm md:text-base"
             />
           </div>
           <div>
-            <label className="block theme-label mb-2 font-medium">段位/外号</label>
+            <label className="block theme-label mb-2 font-medium text-sm md:text-base">段位/外号</label>
             <input
               type="text"
               value={userRank}
               onChange={(e) => setUserRank(e.target.value)}
               placeholder="如：最强王者、璀璨钻石等（召唤师）或九尾妖狐、暗裔剑魔等（英雄外号）"
-              className="w-full px-4 py-2 theme-input rounded-md"
+              className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
             />
           </div>
           <div>
-            <label className="block text-gray-300 mb-2 font-medium">楼层数（仅回复时使用）</label>
+            <label className="block text-gray-300 mb-2 font-medium text-sm md:text-base">楼层数（仅回复时使用）</label>
             <input
               type="number"
               value={floorNumber}
               onChange={(e) => setFloorNumber(e.target.value)}
               placeholder="留空则自动计数"
-              className="w-full px-4 py-2 theme-input rounded-md"
+              className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
               min="1"
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="px-6 py-2 theme-button rounded-md transition-colors"
+            className="px-4 md:px-6 py-2 theme-button rounded-md transition-colors text-sm md:text-base w-full sm:w-auto"
           >
             取消
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-runeterra-gold text-runeterra-dark rounded-md hover:bg-yellow-600 transition-colors font-medium disabled:opacity-50"
+            className="px-4 md:px-6 py-2 bg-runeterra-gold text-runeterra-dark rounded-md hover:bg-yellow-600 transition-colors font-medium disabled:opacity-50 text-sm md:text-base w-full sm:w-auto"
           >
             {loading ? '发布中...' : '发布帖子'}
           </button>

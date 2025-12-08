@@ -16,3 +16,4 @@ services:
         generateValue: true
     healthCheckPath: /api/categories
 
+
