@@ -14,6 +14,7 @@ const Navbar = ({ user, onLogout }) => {
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [editMode, setEditMode] = useState(localStorage.getItem('editMode') === 'true');
   const timeoutRef = useRef(null);
   const themeMenuRef = useRef(null);
 
@@ -99,6 +100,48 @@ const Navbar = ({ user, onLogout }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 监听 editMode 变化
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setEditMode(localStorage.getItem('editMode') === 'true');
+    };
+    window.addEventListener('storage', handleStorageChange);
+    // 也监听同标签页的变化
+    const interval = setInterval(() => {
+      const currentEditMode = localStorage.getItem('editMode') === 'true';
+      if (currentEditMode !== editMode) {
+        setEditMode(currentEditMode);
+      }
+    }, 100);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [editMode]);
+
+  const handleModeToggle = () => {
+    const newEditMode = !editMode;
+    localStorage.setItem('editMode', newEditMode.toString());
+    setEditMode(newEditMode);
+    // 获取当前完整 URL，确保包含 base path
+    const currentUrl = window.location.href;
+    // 如果当前路径不是以 /bbs/ 开头，可能是直接访问的路径，需要添加 base path
+    const basePath = import.meta.env.BASE_URL || '/bbs/';
+    let targetUrl = currentUrl;
+    
+    // 如果当前 URL 不包含 base path，添加它
+    if (!currentUrl.includes('/bbs/') && basePath !== '/') {
+      const url = new URL(currentUrl);
+      const path = url.pathname;
+      // 移除开头的 /，添加 base path
+      const newPath = basePath + path.replace(/^\//, '');
+      targetUrl = url.origin + newPath + url.search + url.hash;
+    }
+    
+    // 刷新页面
+    window.location.href = targetUrl;
+  };
+
   const getThemeIcon = () => {
     if (theme === 'dark') return '🌙';
     return '☀️';
@@ -179,18 +222,21 @@ const Navbar = ({ user, onLogout }) => {
           </div>
 
           <div className="flex items-center space-x-2 md:space-x-4">
-            {/* 主题切换按钮 */}
+            {/* 主题和模式切换按钮 */}
             <div className="relative" ref={themeMenuRef}>
               <button
                 onClick={() => setShowThemeMenu(!showThemeMenu)}
                 className="flex items-center space-x-1 px-2 md:px-3 py-2 theme-button rounded-md transition-colors"
-                title="切换主题"
+                title="切换主题和模式"
               >
                 <span className="text-lg">{getThemeIcon()}</span>
                 <span className="hidden lg:inline text-sm">{getThemeName()}</span>
               </button>
               {showThemeMenu && (
-                <div className="absolute right-0 top-full mt-1 theme-dropdown border border-runeterra-gold/30 rounded-md shadow-lg z-50 min-w-[120px]">
+                <div className="absolute right-0 top-full mt-1 theme-dropdown border border-runeterra-gold/30 rounded-md shadow-lg z-50 min-w-[140px]">
+                  <div className="px-3 py-2 text-xs theme-text-muted border-b border-runeterra-gold/20">
+                    主题
+                  </div>
                   <button
                     onClick={() => { setTheme('dark'); setShowThemeMenu(false); }}
                     className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
@@ -206,6 +252,17 @@ const Navbar = ({ user, onLogout }) => {
                     }`}
                   >
                     ☀️ 浅色
+                  </button>
+                  <div className="px-3 py-2 text-xs theme-text-muted border-t border-runeterra-gold/20 mt-1">
+                    模式
+                  </div>
+                  <button
+                    onClick={() => { handleModeToggle(); setShowThemeMenu(false); }}
+                    className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
+                      editMode ? 'bg-runeterra-purple/20 text-runeterra-purple' : 'theme-dropdown-item'
+                    }`}
+                  >
+                    {editMode ? '✏️ 编辑模式' : '👁️ 展示模式'}
                   </button>
                 </div>
               )}
@@ -255,21 +312,6 @@ const Navbar = ({ user, onLogout }) => {
                     </div>
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    const isEditMode = localStorage.getItem('editMode') === 'true';
-                    localStorage.setItem('editMode', (!isEditMode).toString());
-                    window.location.reload();
-                  }}
-                  className={`px-2 md:px-3 py-1 text-xs transition-colors rounded-md ml-2 md:ml-4 ${
-                    localStorage.getItem('editMode') === 'true'
-                      ? 'bg-runeterra-purple text-white'
-                      : 'theme-button'
-                  }`}
-                >
-                  <span className="hidden sm:inline">{localStorage.getItem('editMode') === 'true' ? '编辑模式' : '展示模式'}</span>
-                  <span className="sm:hidden">{localStorage.getItem('editMode') === 'true' ? '编辑' : '展示'}</span>
-                </button>
               </>
             ) : (
               <>

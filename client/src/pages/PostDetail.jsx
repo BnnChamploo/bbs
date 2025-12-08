@@ -445,16 +445,26 @@ const PostDetail = ({ user }) => {
   const [categoryMap, setCategoryMap] = useState({});
 
   useEffect(() => {
-    fetch('/api/categories/all')
-      .then(res => res.json())
-      .then(data => {
+    // 使用 api.get 而不是 fetch，以支持纯前端模式
+    api.get('/categories/all')
+      .then(res => {
+        const data = res.data;
         const map = {};
         Object.keys(data).forEach(key => {
           map[key] = data[key].name;
         });
         setCategoryMap(map);
       })
-      .catch(err => console.error('获取板块名称失败:', err));
+      .catch(err => {
+        console.error('获取板块名称失败:', err);
+        // 如果 API 失败，使用静态数据作为后备
+        const { CATEGORIES } = require('../data/categories');
+        const map = {};
+        Object.keys(CATEGORIES).forEach(key => {
+          map[key] = CATEGORIES[key].name;
+        });
+        setCategoryMap(map);
+      });
   }, []);
 
   const getCategoryName = (category) => {

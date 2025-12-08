@@ -117,7 +117,7 @@ const Home = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-8 pr-[calc(0.75rem+96px)] sm:pr-[calc(1rem+96px)] md:pr-[calc(1.5rem+96px)] lg:pr-[calc(2rem+96px)]">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 md:py-8">
       <div className="mb-4 md:mb-6">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-runeterra-gold mb-2">
           {category ? getCategoryName(category) : '最新帖子'}
