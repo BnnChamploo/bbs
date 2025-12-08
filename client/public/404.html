@@ -3,22 +3,52 @@
   <head>
     <meta charset="utf-8">
     <title>班德尔密林</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript">
       // GitHub Pages 路由重定向
       // 单页应用 (SPA) 路由支持
-      var pathSegmentsToKeep = 1;
       var l = window.location;
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
+      var basePath = '/bbs';
+      
+      // 处理 URL 中的 ?/ 格式（旧的重定向格式）
+      var path = l.pathname;
+      var search = l.search;
+      
+      // 如果 URL 包含 ?/ 格式，提取实际路径
+      if (search.includes('?/')) {
+        var parts = search.split('?/');
+        if (parts.length > 1) {
+          path = basePath + '/' + parts[1].replace(/~and~/g, '&').split('&')[0];
+          search = '';
+        }
+      }
+      
+      // 确保路径以 base path 开头
+      if (!path.startsWith(basePath)) {
+        if (path === '/' || path === '') {
+          path = basePath + '/';
+        } else {
+          path = basePath + path;
+        }
+      }
+      
+      // 构建新的 URL
+      var newUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + path + search + l.hash;
+      
+      // 重定向到正确的路径
+      if (l.href !== newUrl) {
+        l.replace(newUrl);
+      } else {
+        // 如果已经是正确路径，加载 index.html
+        window.location.href = basePath + '/index.html' + search + l.hash;
+      }
     </script>
   </head>
   <body>
-    <div>正在加载...</div>
+    <div style="text-align: center; padding: 50px; font-family: sans-serif;">
+      <p>正在加载...</p>
+      <p style="font-size: 12px; color: #666;">如果页面没有自动跳转，请<a href="/bbs/">点击这里</a></p>
+    </div>
   </body>
 </html>
 

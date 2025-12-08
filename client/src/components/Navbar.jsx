@@ -123,23 +123,51 @@ const Navbar = ({ user, onLogout }) => {
     const newEditMode = !editMode;
     localStorage.setItem('editMode', newEditMode.toString());
     setEditMode(newEditMode);
-    // 获取当前完整 URL，确保包含 base path
-    const currentUrl = window.location.href;
-    // 如果当前路径不是以 /bbs/ 开头，可能是直接访问的路径，需要添加 base path
-    const basePath = import.meta.env.BASE_URL || '/bbs/';
-    let targetUrl = currentUrl;
     
-    // 如果当前 URL 不包含 base path，添加它
-    if (!currentUrl.includes('/bbs/') && basePath !== '/') {
-      const url = new URL(currentUrl);
-      const path = url.pathname;
-      // 移除开头的 /，添加 base path
-      const newPath = basePath + path.replace(/^\//, '');
-      targetUrl = url.origin + newPath + url.search + url.hash;
+    // 获取当前路径，确保包含 base path
+    const basePath = import.meta.env.BASE_URL || '/bbs/';
+    let currentPath = location.pathname;
+    const currentSearch = location.search;
+    
+    // 清理 URL 中的 ?/ 格式（如果存在）
+    if (currentSearch.includes('?/')) {
+      const parts = currentSearch.split('?/');
+      if (parts.length > 1) {
+        currentPath = basePath + parts[1].replace(/~and~/g, '&').split('&')[0];
+        // 移除已处理的查询参数
+        const remainingSearch = parts[0] || '';
+        if (remainingSearch) {
+          navigate(currentPath + remainingSearch, { replace: true });
+        } else {
+          navigate(currentPath, { replace: true });
+        }
+        // 延迟刷新以确保路由更新
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+        return;
+      }
     }
     
-    // 刷新页面
-    window.location.href = targetUrl;
+    // 确保路径以 base path 开头
+    if (!currentPath.startsWith(basePath) && basePath !== '/') {
+      if (currentPath === '/' || currentPath === '') {
+        currentPath = basePath.slice(0, -1); // 移除末尾的 /
+      } else {
+        currentPath = basePath + currentPath.replace(/^\//, '');
+      }
+    }
+    
+    // 使用 navigate 导航到当前路径，触发重新渲染
+    navigate(currentPath + currentSearch, { replace: true });
+    
+    // 触发 storage 事件，让其他组件知道模式已改变
+    window.dispatchEvent(new Event('storage'));
+    
+    // 强制重新渲染（延迟一下确保状态更新）
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   const getThemeIcon = () => {
@@ -161,7 +189,10 @@ const Navbar = ({ user, onLogout }) => {
               to="/" 
               onClick={(e) => {
                 e.preventDefault();
-                navigate('/', { replace: true });
+                // 使用 navigate 导航到首页，确保包含 base path
+                const basePath = import.meta.env.BASE_URL || '/bbs/';
+                const targetPath = basePath === '/' ? '/' : basePath.slice(0, -1); // 移除末尾的 /
+                navigate(targetPath, { replace: true });
               }}
               className="flex items-center space-x-1 md:space-x-2"
             >
