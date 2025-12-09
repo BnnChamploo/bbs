@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -10,6 +10,33 @@ import CreatePost from './pages/CreatePost';
 import Profile from './pages/Profile';
 import Leaderboard from './pages/Leaderboard';
 import api from './utils/api';
+
+// 处理 404.html 重定向的组件（必须在 Router 内部）
+function RedirectHandler() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // 检查 sessionStorage 中是否有重定向路径
+    const redirectPath = sessionStorage.getItem('redirectPath');
+    if (redirectPath) {
+      // 清除 sessionStorage
+      sessionStorage.removeItem('redirectPath');
+      
+      // 解析路径
+      const url = new URL(redirectPath, window.location.origin);
+      const targetPath = url.pathname;
+      const targetSearch = url.search;
+      const targetHash = url.hash;
+      
+      // 使用 navigate 跳转到正确路径
+      setTimeout(() => {
+        navigate(targetPath + targetSearch + targetHash, { replace: true });
+      }, 0);
+    }
+  }, [navigate]);
+
+  return null;
+}
 
 function App() {
   const [user, setUser] = useState(null);
@@ -70,6 +97,7 @@ function App() {
   return (
     <ThemeProvider>
       <Router basename={basename}>
+        <RedirectHandler />
         <div className="min-h-screen theme-bg">
           <Navbar user={user} onLogout={handleLogout} />
           <Routes>
