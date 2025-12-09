@@ -20,6 +20,8 @@ function RedirectHandler() {
     // 检查 sessionStorage 中是否有重定向路径
     const redirectPath = sessionStorage.getItem('redirectPath');
     if (redirectPath) {
+      console.log('[RedirectHandler] Found redirectPath:', redirectPath);
+      
       // 清除 sessionStorage
       sessionStorage.removeItem('redirectPath');
       
@@ -31,15 +33,25 @@ function RedirectHandler() {
       
       if (redirectPath.startsWith('/')) {
         // 完整路径，解析URL
-        const url = new URL(redirectPath, window.location.origin);
-        targetPath = url.pathname;
-        targetSearch = url.search;
-        targetHash = url.hash;
-        
-        // 移除 base path（React Router 的 basename 会自动处理）
-        const basePath = import.meta.env.BASE_URL || '/bbs/';
-        if (basePath !== '/' && targetPath.startsWith(basePath.slice(0, -1))) {
-          targetPath = targetPath.slice(basePath.slice(0, -1).length) || '/';
+        try {
+          const url = new URL(redirectPath, window.location.origin);
+          targetPath = url.pathname;
+          targetSearch = url.search;
+          targetHash = url.hash;
+          
+          // 移除 base path（React Router 的 basename 会自动处理）
+          const basePath = import.meta.env.BASE_URL || '/bbs/';
+          if (basePath !== '/' && targetPath.startsWith(basePath.slice(0, -1))) {
+            targetPath = targetPath.slice(basePath.slice(0, -1).length) || '/';
+          }
+        } catch (e) {
+          // 如果 URL 解析失败，直接使用 redirectPath 作为路径
+          console.error('[RedirectHandler] Failed to parse URL:', e);
+          targetPath = redirectPath.split('?')[0].split('#')[0];
+          const searchMatch = redirectPath.match(/\?([^#]*)/);
+          const hashMatch = redirectPath.match(/#(.*)/);
+          targetSearch = searchMatch ? '?' + searchMatch[1] : '';
+          targetHash = hashMatch ? '#' + hashMatch[1] : '';
         }
       } else if (redirectPath.startsWith('?')) {
         // 只有查询参数
@@ -58,12 +70,18 @@ function RedirectHandler() {
       // 使用 navigate 跳转到正确路径（replace 避免在历史记录中留下记录）
       const targetUrl = targetPath + targetSearch + targetHash;
       
+      console.log('[RedirectHandler] Navigating to:', targetUrl);
+      console.log('[RedirectHandler] Current location:', location.pathname + location.search + location.hash);
+      
       // 如果当前路径和目标路径不同，才进行跳转
       if (location.pathname + location.search + location.hash !== targetUrl) {
-        navigate(targetUrl, { replace: true });
+        // 使用 setTimeout 确保在下一个事件循环中执行，避免与 React Router 的初始化冲突
+        setTimeout(() => {
+          navigate(targetUrl, { replace: true });
+        }, 0);
       }
     }
-  }, [navigate, location]);
+  }, [navigate]); // 移除 location 依赖，避免重复执行
 
   return null;
 }
