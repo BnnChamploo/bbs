@@ -484,4 +484,31 @@ button, a, input, select, textarea {
   color: #166534;
 }
 
+/* 移动端 Drawer 动画 */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.md\:hidden[class*="fixed"][class*="left-0"] {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.md\:hidden[class*="fixed"][class*="right-0"] {
+  animation: slideInRight 0.3s ease-out;
+}
+
 

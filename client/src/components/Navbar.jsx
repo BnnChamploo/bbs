@@ -14,9 +14,11 @@ const Navbar = ({ user, onLogout }) => {
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showProfileDrawer, setShowProfileDrawer] = useState(false);
   const [editMode, setEditMode] = useState(localStorage.getItem('editMode') === 'true');
   const timeoutRef = useRef(null);
   const themeMenuRef = useRef(null);
+  const profileDrawerRef = useRef(null);
 
   useEffect(() => {
     // 获取主板块（包含子板块信息）
@@ -95,6 +97,9 @@ const Navbar = ({ user, onLogout }) => {
       if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
         setShowThemeMenu(false);
       }
+      if (profileDrawerRef.current && !profileDrawerRef.current.contains(event.target)) {
+        setShowProfileDrawer(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -124,49 +129,23 @@ const Navbar = ({ user, onLogout }) => {
     localStorage.setItem('editMode', newEditMode.toString());
     setEditMode(newEditMode);
     
-    // 获取当前路径，确保包含 base path
-    const basePath = import.meta.env.BASE_URL || '/bbs/';
-    let currentPath = location.pathname;
+    // 获取当前路径和查询参数
+    const currentPath = location.pathname;
     const currentSearch = location.search;
-    
-    // 清理 URL 中的 ?/ 格式（如果存在）
-    if (currentSearch.includes('?/')) {
-      const parts = currentSearch.split('?/');
-      if (parts.length > 1) {
-        currentPath = basePath + parts[1].replace(/~and~/g, '&').split('&')[0];
-        // 移除已处理的查询参数
-        const remainingSearch = parts[0] || '';
-        if (remainingSearch) {
-          navigate(currentPath + remainingSearch, { replace: true });
-        } else {
-          navigate(currentPath, { replace: true });
-        }
-        // 延迟刷新以确保路由更新
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
-        return;
-      }
-    }
-    
-    // 确保路径以 base path 开头
-    if (!currentPath.startsWith(basePath) && basePath !== '/') {
-      if (currentPath === '/' || currentPath === '') {
-        currentPath = basePath.slice(0, -1); // 移除末尾的 /
-      } else {
-        currentPath = basePath + currentPath.replace(/^\//, '');
-      }
-    }
-    
-    // 使用 navigate 导航到当前路径，触发重新渲染
-    navigate(currentPath + currentSearch, { replace: true });
     
     // 触发 storage 事件，让其他组件知道模式已改变
     window.dispatchEvent(new Event('storage'));
     
-    // 强制重新渲染（延迟一下确保状态更新）
+    // 使用 navigate 导航到当前路径，触发重新渲染
+    // 不直接刷新，而是通过路由更新来触发组件重新渲染
+    navigate(currentPath + currentSearch, { replace: true });
+    
+    // 延迟刷新以确保状态更新（但避免跳转到 index.html）
     setTimeout(() => {
-      window.location.reload();
+      // 检查当前路径，如果不是 index.html，才刷新
+      if (!window.location.pathname.includes('index.html')) {
+        window.location.reload();
+      }
     }, 100);
   };
 
@@ -195,7 +174,7 @@ const Navbar = ({ user, onLogout }) => {
               <span className="text-xs md:text-sm text-gray-400 hidden sm:inline">符文大陆里宇宙</span>
             </Link>
             
-            {/* 移动端菜单按钮 */}
+            {/* 移动端菜单按钮 - 左侧 drawer */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="md:hidden px-2 py-1 theme-button rounded-md"
@@ -213,7 +192,7 @@ const Navbar = ({ user, onLogout }) => {
                   onMouseLeave={handleMouseLeave}
                 >
                   <Link
-                    to={`?category=${cat.value}`}
+                    to={`/?category=${cat.value}`}
                     className={`px-5 py-2 text-base font-medium transition-colors ${
                       isActive(cat.value)
                         ? 'text-runeterra-gold'
@@ -228,7 +207,7 @@ const Navbar = ({ user, onLogout }) => {
                       {cat.subcategories.map((subCat, subIndex) => (
                         <Link
                           key={`subcat-${subCat.value}-${subIndex}`}
-                          to={`?category=${subCat.value}`}
+                          to={`/?category=${subCat.value}`}
                           className={`block px-4 py-2 text-sm transition-colors ${
                             location.search.includes(`category=${subCat.value}`)
                               ? 'bg-runeterra-gold/20 text-runeterra-gold'
@@ -294,14 +273,25 @@ const Navbar = ({ user, onLogout }) => {
 
             {user ? (
               <>
+                {/* 桌面端：保持原有样式 */}
                 <Link
                   to="/create-post"
-                  className="px-3 md:px-4 py-2 bg-runeterra-gold text-runeterra-dark hover:bg-yellow-600 transition-colors font-medium rounded-md text-sm md:text-base"
+                  className="hidden sm:inline px-4 py-2 bg-runeterra-gold text-runeterra-dark hover:bg-yellow-600 transition-colors font-medium rounded-md"
                 >
-                  <span className="hidden sm:inline">发帖</span>
-                  <span className="sm:hidden">✏️</span>
+                  发帖
                 </Link>
-                <div className="relative group">
+                {/* 移动端：SVG 铅笔图标幽灵按钮 */}
+                <Link
+                  to="/create-post"
+                  className="sm:hidden p-2 theme-button rounded-md transition-colors"
+                  title="发布新帖子"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5">
+                    <path d="M20.548 3.452a1.542 1.542 0 0 1 0 2.182l-7.636 7.636-3.273 1.091 1.091-3.273 7.636-7.636a1.542 1.542 0 0 1 2.182 0zM4 21h15a1 1 0 0 0 1-1v-8a1 1 0 0 0-2 0v7H5V6h7a1 1 0 0 0 0-2H4a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1z" fill="currentColor"/>
+                  </svg>
+                </Link>
+                {/* 桌面端：保持原有样式 */}
+                <div className="hidden md:block relative group">
                   <Link
                     to="/profile"
                     className="flex items-center space-x-2 theme-nav-link hover:text-runeterra-gold transition-colors"
@@ -336,6 +326,31 @@ const Navbar = ({ user, onLogout }) => {
                     </div>
                   </div>
                 </div>
+                
+                {/* 移动端：头像按钮，点击打开右侧 drawer */}
+                <button
+                  onClick={() => setShowProfileDrawer(!showProfileDrawer)}
+                  className="md:hidden flex items-center"
+                  aria-label="用户菜单"
+                >
+                  <div className="relative w-8 h-8">
+                    {getAvatarUrl(user.avatar) ? (
+                      <img
+                        src={getAvatarUrl(user.avatar)}
+                        alt={user.username}
+                        className="w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          const fallback = e.target.nextElementSibling;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className={`absolute inset-0 w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-sm font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
+                      {user.username?.[0]?.toUpperCase() || '?'}
+                    </div>
+                  </div>
+                </button>
               </>
             ) : (
               <>
@@ -356,14 +371,35 @@ const Navbar = ({ user, onLogout }) => {
           </div>
         </div>
         
-        {/* 移动端菜单 */}
-        {showMobileMenu && (
-          <div className="md:hidden border-t border-runeterra-gold/20 theme-dropdown">
-            <div className="px-4 py-3 space-y-2">
-              {categories.map((cat, index) => (
+      </div>
+      
+      {/* 移动端左侧 drawer - 模块列表 */}
+      {showMobileMenu && (
+        <>
+          {/* 遮罩层 */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setShowMobileMenu(false)}
+          />
+          {/* Drawer */}
+          <div className="fixed left-0 top-0 bottom-0 w-64 theme-dropdown border-r border-runeterra-gold/30 shadow-lg z-50 md:hidden transform transition-transform duration-300">
+            <div className="p-4 border-b border-runeterra-gold/20">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-runeterra-gold">板块</h2>
+                <button
+                  onClick={() => setShowMobileMenu(false)}
+                  className="text-2xl theme-text-secondary hover:text-runeterra-gold"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className="overflow-y-auto h-full pb-20">
+              <div className="px-4 py-3 space-y-2">
+                {categories.map((cat, index) => (
                 <div key={`mobile-cat-${cat.value || 'plaza'}-${index}`}>
                   <Link
-                    to={`?category=${cat.value}`}
+                    to={`/?category=${cat.value}`}
                     onClick={() => setShowMobileMenu(false)}
                     className={`block px-4 py-2 rounded-md transition-colors ${
                       isActive(cat.value)
@@ -378,7 +414,7 @@ const Navbar = ({ user, onLogout }) => {
                       {cat.subcategories.map((subCat, subIndex) => (
                         <Link
                           key={`mobile-subcat-${subCat.value}-${subIndex}`}
-                          to={`?category=${subCat.value}`}
+                          to={`/?category=${subCat.value}`}
                           onClick={() => setShowMobileMenu(false)}
                           className={`block px-4 py-2 rounded-md text-sm transition-colors ${
                             location.search.includes(`category=${subCat.value}`)
@@ -392,11 +428,128 @@ const Navbar = ({ user, onLogout }) => {
                     </div>
                   )}
                 </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
+      
+      {/* 移动端右侧 drawer - 个人资料菜单 */}
+      {showProfileDrawer && (
+        <>
+          {/* 遮罩层 */}
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setShowProfileDrawer(false)}
+          />
+          {/* Drawer */}
+          <div ref={profileDrawerRef} className="fixed right-0 top-0 bottom-0 w-64 theme-dropdown border-l border-runeterra-gold/30 shadow-lg z-50 md:hidden transform transition-transform duration-300">
+            <div className="p-4 border-b border-runeterra-gold/20">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold text-runeterra-gold">菜单</h2>
+                <button
+                  onClick={() => setShowProfileDrawer(false)}
+                  className="text-2xl theme-text-secondary hover:text-runeterra-gold"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div className="overflow-y-auto h-full pb-20">
+              <div className="p-4 space-y-2">
+                {/* 个人资料区域 - 点击跳转 */}
+                <Link
+                  to="/profile"
+                  onClick={() => setShowProfileDrawer(false)}
+                  className="flex items-center space-x-3 p-3 rounded-md theme-dropdown-item hover:bg-runeterra-gold/10 transition-colors"
+                >
+                  <div className="relative w-12 h-12">
+                    {getAvatarUrl(user.avatar) ? (
+                      <img
+                        src={getAvatarUrl(user.avatar)}
+                        alt={user.username}
+                        className="w-12 h-12 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          const fallback = e.target.nextElementSibling;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className={`absolute inset-0 w-12 h-12 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-lg font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
+                      {user.username?.[0]?.toUpperCase() || '?'}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium theme-text-primary">{user.username}</div>
+                    <div className="text-sm theme-text-muted">查看个人资料</div>
+                  </div>
+                </Link>
+                
+                <div className="border-t border-runeterra-gold/20 my-2"></div>
+                
+                {/* 主题切换 */}
+                <div className="p-3">
+                  <div className="text-sm theme-text-muted mb-2">主题</div>
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => { setTheme('dark'); setShowProfileDrawer(false); }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
+                        theme === 'dark' ? 'bg-runeterra-gold/20 text-runeterra-gold' : 'theme-dropdown-item'
+                      }`}
+                    >
+                      <span>🌙</span>
+                      <span>深色模式</span>
+                    </button>
+                    <button
+                      onClick={() => { setTheme('light-white'); setShowProfileDrawer(false); }}
+                      className={`w-full flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
+                        theme === 'light-white' ? 'bg-runeterra-gold/20 text-runeterra-gold' : 'theme-dropdown-item'
+                      }`}
+                    >
+                      <span>☀️</span>
+                      <span>浅色模式</span>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="border-t border-runeterra-gold/20 my-2"></div>
+                
+                {/* 编辑/展示模式切换 */}
+                <div className="p-3">
+                  <div className="text-sm theme-text-muted mb-2">模式</div>
+                  <button
+                    onClick={() => { handleModeToggle(); setShowProfileDrawer(false); }}
+                    className={`w-full flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
+                      editMode ? 'bg-runeterra-purple/20 text-runeterra-purple' : 'theme-dropdown-item'
+                    }`}
+                  >
+                    <span>{editMode ? '✏️' : '👁️'}</span>
+                    <span>{editMode ? '编辑模式' : '展示模式'}</span>
+                  </button>
+                </div>
+                
+                <div className="border-t border-runeterra-gold/20 my-2"></div>
+                
+                {/* 退出登录 */}
+                <div className="p-3">
+                  <button
+                    onClick={() => {
+                      onLogout();
+                      setShowProfileDrawer(false);
+                    }}
+                    className="w-full flex items-center space-x-2 px-3 py-2 rounded-md theme-dropdown-item hover:bg-red-600/20 hover:text-red-400 transition-colors"
+                  >
+                    <span>🚪</span>
+                    <span>退出登录</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </nav>
   );
 };
