@@ -511,4 +511,17 @@ button, a, input, select, textarea {
   animation: slideInRight 0.3s ease-out;
 }
 
+/* Switch 按钮样式优化 */
+[data-theme="dark"] .peer-checked\:bg-runeterra-gold {
+  background-color: #C9AA71;
+}
+
+[data-theme="dark"] .peer-checked\:bg-runeterra-purple {
+  background-color: #8B5CF6;
+}
+
+[data-theme="dark"] .bg-gray-200 {
+  background-color: #4b5563;
+}
+
 

@@ -130,23 +130,42 @@ const Navbar = ({ user, onLogout }) => {
     setEditMode(newEditMode);
     
     // 获取当前路径和查询参数
-    const currentPath = location.pathname;
+    let currentPath = location.pathname;
     const currentSearch = location.search;
+    const currentHash = location.hash;
+    
+    // 清理路径，移除 index.html 和多余的斜杠
+    if (currentPath.includes('index.html')) {
+      currentPath = currentPath.replace(/\/index\.html$/, '').replace(/\/$/, '') || '/';
+    }
+    
+    // 确保路径以 / 开头
+    if (!currentPath.startsWith('/')) {
+      currentPath = '/' + currentPath;
+    }
     
     // 触发 storage 事件，让其他组件知道模式已改变
     window.dispatchEvent(new Event('storage'));
     
-    // 使用 navigate 导航到当前路径，触发重新渲染
-    // 不直接刷新，而是通过路由更新来触发组件重新渲染
-    navigate(currentPath + currentSearch, { replace: true });
+    // 构建目标 URL，确保不包含 index.html
+    const basePath = import.meta.env.BASE_URL || '/bbs/';
+    let targetPath = currentPath;
     
-    // 延迟刷新以确保状态更新（但避免跳转到 index.html）
-    setTimeout(() => {
-      // 检查当前路径，如果不是 index.html，才刷新
-      if (!window.location.pathname.includes('index.html')) {
-        window.location.reload();
+    // 确保路径包含 base path（如果设置了）
+    if (basePath !== '/' && !targetPath.startsWith(basePath)) {
+      if (targetPath === '/') {
+        targetPath = basePath.slice(0, -1); // 移除末尾的 /
+      } else {
+        targetPath = basePath + targetPath.replace(/^\//, '');
       }
-    }, 100);
+    }
+    
+    // 构建完整 URL
+    const fullUrl = window.location.origin + targetPath + currentSearch + currentHash;
+    
+    // 使用 window.location.replace 来刷新，避免在历史记录中留下 index.html
+    // replace 方法不会触发 GitHub Pages 的 404 重定向
+    window.location.replace(fullUrl);
   };
 
   const getThemeIcon = () => {
@@ -164,6 +183,17 @@ const Navbar = ({ user, onLogout }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4 md:space-x-8">
+            {/* 移动端菜单按钮 - 左侧 drawer，移到论坛名左侧 */}
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="md:hidden p-2"
+              aria-label="菜单"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 theme-text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            
             <Link 
               to="/" 
               className="flex items-center space-x-1 md:space-x-2"
@@ -173,15 +203,6 @@ const Navbar = ({ user, onLogout }) => {
               </span>
               <span className="text-xs md:text-sm text-gray-400 hidden sm:inline">符文大陆里宇宙</span>
             </Link>
-            
-            {/* 移动端菜单按钮 - 左侧 drawer */}
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden px-2 py-1 theme-button rounded-md"
-              aria-label="菜单"
-            >
-              <span className="text-xl">☰</span>
-            </button>
             
             <div className="hidden md:flex items-center space-x-1">
               {categories.map((cat, index) => (
@@ -225,8 +246,8 @@ const Navbar = ({ user, onLogout }) => {
           </div>
 
           <div className="flex items-center space-x-2 md:space-x-4">
-            {/* 主题和模式切换按钮 */}
-            <div className="relative" ref={themeMenuRef}>
+            {/* 主题和模式切换按钮 - 桌面端显示，移动端隐藏 */}
+            <div className="relative hidden md:block" ref={themeMenuRef}>
               <button
                 onClick={() => setShowThemeMenu(!showThemeMenu)}
                 className="flex items-center space-x-1 px-2 md:px-3 py-2 theme-button rounded-md transition-colors"
@@ -445,31 +466,26 @@ const Navbar = ({ user, onLogout }) => {
           />
           {/* Drawer */}
           <div ref={profileDrawerRef} className="fixed right-0 top-0 bottom-0 w-64 theme-dropdown border-l border-runeterra-gold/30 shadow-lg z-50 md:hidden transform transition-transform duration-300">
-            <div className="p-4 border-b border-runeterra-gold/20">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-runeterra-gold">菜单</h2>
-                <button
-                  onClick={() => setShowProfileDrawer(false)}
-                  className="text-2xl theme-text-secondary hover:text-runeterra-gold"
-                >
-                  ×
-                </button>
-              </div>
+            {/* 关闭按钮 */}
+            <div className="absolute top-4 right-4 z-10">
+              <button
+                onClick={() => setShowProfileDrawer(false)}
+                className="text-2xl theme-text-secondary hover:text-runeterra-gold"
+              >
+                ×
+              </button>
             </div>
+            
             <div className="overflow-y-auto h-full pb-20">
-              <div className="p-4 space-y-2">
-                {/* 个人资料区域 - 点击跳转 */}
-                <Link
-                  to="/profile"
-                  onClick={() => setShowProfileDrawer(false)}
-                  className="flex items-center space-x-3 p-3 rounded-md theme-dropdown-item hover:bg-runeterra-gold/10 transition-colors"
-                >
-                  <div className="relative w-12 h-12">
+              <div className="p-6">
+                {/* 头像居中大图 */}
+                <div className="flex justify-center mb-4">
+                  <div className="relative w-24 h-24">
                     {getAvatarUrl(user.avatar) ? (
                       <img
                         src={getAvatarUrl(user.avatar)}
                         alt={user.username}
-                        className="w-12 h-12 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
+                        className="w-24 h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
                           const fallback = e.target.nextElementSibling;
@@ -477,71 +493,88 @@ const Navbar = ({ user, onLogout }) => {
                         }}
                       />
                     ) : null}
-                    <div className={`absolute inset-0 w-12 h-12 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-lg font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
+                    <div className={`absolute inset-0 w-24 h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-3xl font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
                       {user.username?.[0]?.toUpperCase() || '?'}
                     </div>
                   </div>
-                  <div className="flex-1">
-                    <div className="font-medium theme-text-primary">{user.username}</div>
-                    <div className="text-sm theme-text-muted">查看个人资料</div>
-                  </div>
-                </Link>
-                
-                <div className="border-t border-runeterra-gold/20 my-2"></div>
-                
-                {/* 主题切换 */}
-                <div className="p-3">
-                  <div className="text-sm theme-text-muted mb-2">主题</div>
-                  <div className="space-y-1">
-                    <button
-                      onClick={() => { setTheme('dark'); setShowProfileDrawer(false); }}
-                      className={`w-full flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
-                        theme === 'dark' ? 'bg-runeterra-gold/20 text-runeterra-gold' : 'theme-dropdown-item'
-                      }`}
-                    >
-                      <span>🌙</span>
-                      <span>深色模式</span>
-                    </button>
-                    <button
-                      onClick={() => { setTheme('light-white'); setShowProfileDrawer(false); }}
-                      className={`w-full flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
-                        theme === 'light-white' ? 'bg-runeterra-gold/20 text-runeterra-gold' : 'theme-dropdown-item'
-                      }`}
-                    >
-                      <span>☀️</span>
-                      <span>浅色模式</span>
-                    </button>
-                  </div>
                 </div>
                 
-                <div className="border-t border-runeterra-gold/20 my-2"></div>
+                {/* 用户名居中展示 */}
+                <div className="text-center mb-2">
+                  <div className="font-medium text-lg theme-text-primary">{user.username}</div>
+                </div>
                 
-                {/* 编辑/展示模式切换 */}
-                <div className="p-3">
-                  <div className="text-sm theme-text-muted mb-2">模式</div>
-                  <button
-                    onClick={() => { handleModeToggle(); setShowProfileDrawer(false); }}
-                    className={`w-full flex items-center space-x-2 px-3 py-2 rounded-md transition-colors ${
-                      editMode ? 'bg-runeterra-purple/20 text-runeterra-purple' : 'theme-dropdown-item'
-                    }`}
+                {/* 个人资料链接 */}
+                <div className="text-center mb-6">
+                  <Link
+                    to="/profile"
+                    onClick={() => setShowProfileDrawer(false)}
+                    className="text-sm theme-text-muted hover:text-runeterra-gold transition-colors"
                   >
-                    <span>{editMode ? '✏️' : '👁️'}</span>
-                    <span>{editMode ? '编辑模式' : '展示模式'}</span>
-                  </button>
+                    个人资料
+                  </Link>
                 </div>
                 
-                <div className="border-t border-runeterra-gold/20 my-2"></div>
+                <div className="border-t border-runeterra-gold/20 my-4"></div>
+                
+                {/* 主题切换 - Switch 按钮 */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm theme-text-primary">主题</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={theme === 'dark'}
+                        onChange={(e) => {
+                          setTheme(e.target.checked ? 'dark' : 'light-white');
+                        }}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-runeterra-gold/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-runeterra-gold"></div>
+                    </label>
+                  </div>
+                  <div className="text-xs theme-text-muted text-center">
+                    {theme === 'dark' ? '深色模式' : '浅色模式'}
+                  </div>
+                </div>
+                
+                <div className="border-t border-runeterra-gold/20 my-4"></div>
+                
+                {/* 编辑/展示模式切换 - Switch 按钮 */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm theme-text-primary">模式</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={editMode}
+                        onChange={(e) => {
+                          handleModeToggle();
+                        }}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-runeterra-purple/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-runeterra-purple"></div>
+                    </label>
+                  </div>
+                  <div className="text-xs theme-text-muted text-center">
+                    {editMode ? '编辑模式' : '展示模式'}
+                  </div>
+                </div>
+                
+                <div className="border-t border-runeterra-gold/20 my-4"></div>
                 
                 {/* 退出登录 */}
-                <div className="p-3">
+                <div className="text-center">
                   <button
                     onClick={() => {
                       onLogout();
                       setShowProfileDrawer(false);
                     }}
-                    className="w-full flex items-center space-x-2 px-3 py-2 rounded-md theme-dropdown-item hover:bg-red-600/20 hover:text-red-400 transition-colors"
+                    className="flex items-center justify-center space-x-2 px-4 py-2 rounded-md theme-dropdown-item hover:bg-red-600/20 hover:text-red-400 transition-colors mx-auto"
                   >
-                    <span>🚪</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
                     <span>退出登录</span>
                   </button>
                 </div>
