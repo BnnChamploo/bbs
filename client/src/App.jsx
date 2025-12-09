@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -14,6 +14,7 @@ import api from './utils/api';
 // 处理 404.html 重定向的组件（必须在 Router 内部）
 function RedirectHandler() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // 检查 sessionStorage 中是否有重定向路径
@@ -24,16 +25,30 @@ function RedirectHandler() {
       
       // 解析路径
       const url = new URL(redirectPath, window.location.origin);
-      const targetPath = url.pathname;
+      let targetPath = url.pathname;
       const targetSearch = url.search;
       const targetHash = url.hash;
       
-      // 使用 navigate 跳转到正确路径
-      setTimeout(() => {
-        navigate(targetPath + targetSearch + targetHash, { replace: true });
-      }, 0);
+      // 移除 base path（React Router 的 basename 会自动处理）
+      const basePath = import.meta.env.BASE_URL || '/bbs/';
+      if (basePath !== '/' && targetPath.startsWith(basePath.slice(0, -1))) {
+        targetPath = targetPath.slice(basePath.slice(0, -1).length) || '/';
+      }
+      
+      // 确保路径以 / 开头
+      if (!targetPath.startsWith('/')) {
+        targetPath = '/' + targetPath;
+      }
+      
+      // 使用 navigate 跳转到正确路径（replace 避免在历史记录中留下记录）
+      const targetUrl = targetPath + targetSearch + targetHash;
+      
+      // 如果当前路径和目标路径不同，才进行跳转
+      if (location.pathname + location.search + location.hash !== targetUrl) {
+        navigate(targetUrl, { replace: true });
+      }
     }
-  }, [navigate]);
+  }, [navigate, location]);
 
   return null;
 }

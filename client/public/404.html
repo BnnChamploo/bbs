@@ -58,12 +58,21 @@
       // 构建新的 URL：重定向到根路径的 index.html
       // 将原始路径保存到 sessionStorage，React Router 会读取并处理
       if (path !== basePath && path !== basePath + '/') {
-        sessionStorage.setItem('redirectPath', path + search + hash);
+        // 移除 basePath 前缀，因为 React Router 的 basename 会自动处理
+        var routerPath = path;
+        if (path.startsWith(basePath)) {
+          routerPath = path.slice(basePath.length) || '/';
+        }
+        // 确保路径以 / 开头
+        if (!routerPath.startsWith('/')) {
+          routerPath = '/' + routerPath;
+        }
+        sessionStorage.setItem('redirectPath', routerPath + search + hash);
       }
       
       // 重定向到 index.html（只重定向一次，避免死循环）
       var newUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
-        indexPath + search + hash;
+        indexPath;
       
       l.replace(newUrl);
     </script>
