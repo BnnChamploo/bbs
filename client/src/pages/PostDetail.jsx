@@ -296,8 +296,8 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
             )}
             <span className="text-xs text-runeterra-gold">{reply.rank || '坚韧黑铁'}</span>
             <span className="theme-text-secondary hidden sm:inline">|</span>
-            <span className="text-xs md:text-sm theme-text-secondary whitespace-nowrap">发布于{formatRuneterraTime(reply.created_at, reply.custom_time)}</span>
-            {reply.region && <><span className="theme-text-secondary hidden sm:inline"> | </span><span className="text-xs md:text-sm theme-text-secondary whitespace-nowrap">来自 {reply.region}</span></>}
+            <span className="text-xs md:text-sm text-gray-400 whitespace-nowrap">发布于{formatRuneterraTime(reply.created_at, reply.custom_time)}</span>
+            {reply.region && <><span className="text-gray-400 hidden sm:inline"> | </span><span className="text-xs md:text-sm text-gray-400 whitespace-nowrap">来自 {reply.region}</span></>}
             {isEditMode && (
               <>
                 <span className="text-gray-400 hidden sm:inline"> | </span>

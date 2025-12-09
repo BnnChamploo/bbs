@@ -12,9 +12,19 @@
       var indexPath = basePath + '/index.html';
       
       // 如果当前路径已经是 index.html 或根路径，不要重定向（避免死循环）
+      // 注意：对于带查询参数的根路径（如 /bbs/?category=plaza），GitHub Pages 会直接返回 index.html，不会触发 404.html
+      // 但如果确实触发了 404.html，说明路径有问题，需要重定向
       if (l.pathname === indexPath || l.pathname === basePath + '/' || l.pathname === basePath) {
-        // 已经是正确的路径，不需要重定向
-        return;
+        // 如果路径是根路径但带查询参数，保存查询参数并重定向到 index.html
+        if (l.search || l.hash) {
+          // 保存查询参数和 hash 到 sessionStorage，让 React Router 处理
+          // 注意：只保存查询参数和hash，不包含路径
+          sessionStorage.setItem('redirectPath', l.search + l.hash);
+          l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + indexPath);
+        } else {
+          // 已经是正确的路径，不需要重定向
+          return;
+        }
       }
       
       // 如果路径以 /index.html 结尾，说明已经在重定向循环中，直接返回

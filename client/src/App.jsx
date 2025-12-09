@@ -23,16 +23,31 @@ function RedirectHandler() {
       // 清除 sessionStorage
       sessionStorage.removeItem('redirectPath');
       
-      // 解析路径
-      const url = new URL(redirectPath, window.location.origin);
-      let targetPath = url.pathname;
-      const targetSearch = url.search;
-      const targetHash = url.hash;
+      // 如果 redirectPath 以 / 开头，说明是完整路径
+      // 如果以 ? 或 # 开头，说明只有查询参数或hash
+      let targetPath = '/';
+      let targetSearch = '';
+      let targetHash = '';
       
-      // 移除 base path（React Router 的 basename 会自动处理）
-      const basePath = import.meta.env.BASE_URL || '/bbs/';
-      if (basePath !== '/' && targetPath.startsWith(basePath.slice(0, -1))) {
-        targetPath = targetPath.slice(basePath.slice(0, -1).length) || '/';
+      if (redirectPath.startsWith('/')) {
+        // 完整路径，解析URL
+        const url = new URL(redirectPath, window.location.origin);
+        targetPath = url.pathname;
+        targetSearch = url.search;
+        targetHash = url.hash;
+        
+        // 移除 base path（React Router 的 basename 会自动处理）
+        const basePath = import.meta.env.BASE_URL || '/bbs/';
+        if (basePath !== '/' && targetPath.startsWith(basePath.slice(0, -1))) {
+          targetPath = targetPath.slice(basePath.slice(0, -1).length) || '/';
+        }
+      } else if (redirectPath.startsWith('?')) {
+        // 只有查询参数
+        targetSearch = redirectPath.split('#')[0];
+        targetHash = redirectPath.includes('#') ? '#' + redirectPath.split('#').slice(1).join('#') : '';
+      } else if (redirectPath.startsWith('#')) {
+        // 只有hash
+        targetHash = redirectPath;
       }
       
       // 确保路径以 / 开头
