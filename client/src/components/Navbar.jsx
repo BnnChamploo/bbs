@@ -160,12 +160,30 @@ const Navbar = ({ user, onLogout }) => {
       }
     }
     
-    // 构建完整 URL
+    // 确保路径不以 / 结尾（除非是根路径），避免 GitHub Pages 重定向到 index.html
+    if (targetPath !== basePath.slice(0, -1) && targetPath.endsWith('/')) {
+      targetPath = targetPath.slice(0, -1);
+    }
+    
+    // 构建完整 URL，确保不包含 index.html
     const fullUrl = window.location.origin + targetPath + currentSearch + currentHash;
     
-    // 使用 window.location.replace 来刷新，避免在历史记录中留下 index.html
-    // replace 方法不会触发 GitHub Pages 的 404 重定向
-    window.location.replace(fullUrl);
+    // 使用 navigate 先更新路由状态
+    navigate(currentPath + currentSearch + currentHash, { replace: true });
+    
+    // 然后使用 window.location.href 来刷新，但确保路径正确
+    // 使用 setTimeout 确保 navigate 先执行
+    setTimeout(() => {
+      // 再次检查当前路径，确保不包含 index.html
+      const checkPath = window.location.pathname;
+      if (checkPath.includes('index.html')) {
+        // 如果已经跳转到 index.html，使用 replace 修正
+        window.location.replace(fullUrl);
+      } else {
+        // 否则直接刷新当前页面
+        window.location.href = fullUrl;
+      }
+    }, 10);
   };
 
   const getThemeIcon = () => {
@@ -509,7 +527,7 @@ const Navbar = ({ user, onLogout }) => {
                   <Link
                     to="/profile"
                     onClick={() => setShowProfileDrawer(false)}
-                    className="text-sm theme-text-muted hover:text-runeterra-gold transition-colors"
+                    className="text-sm theme-text-primary hover:text-runeterra-gold transition-colors"
                   >
                     个人资料
                   </Link>
@@ -517,10 +535,10 @@ const Navbar = ({ user, onLogout }) => {
                 
                 <div className="border-t border-runeterra-gold/20 my-4"></div>
                 
-                {/* 主题切换 - Switch 按钮 */}
+                {/* 深色主题 - Switch 按钮 */}
                 <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm theme-text-primary">主题</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm theme-text-primary">深色主题</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
@@ -533,17 +551,14 @@ const Navbar = ({ user, onLogout }) => {
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-runeterra-gold/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-runeterra-gold"></div>
                     </label>
                   </div>
-                  <div className="text-xs theme-text-muted text-center">
-                    {theme === 'dark' ? '深色模式' : '浅色模式'}
-                  </div>
                 </div>
                 
                 <div className="border-t border-runeterra-gold/20 my-4"></div>
                 
-                {/* 编辑/展示模式切换 - Switch 按钮 */}
+                {/* 编辑模式 - Switch 按钮 */}
                 <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm theme-text-primary">模式</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm theme-text-primary">编辑模式</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
@@ -555,9 +570,6 @@ const Navbar = ({ user, onLogout }) => {
                       />
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-runeterra-purple/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-runeterra-purple"></div>
                     </label>
-                  </div>
-                  <div className="text-xs theme-text-muted text-center">
-                    {editMode ? '编辑模式' : '展示模式'}
                   </div>
                 </div>
                 
