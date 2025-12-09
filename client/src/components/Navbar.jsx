@@ -518,19 +518,23 @@ const Navbar = ({ user, onLogout }) => {
                 </div>
                 
                 {/* 用户名居中展示 */}
-                <div className="text-center mb-2">
+                <div className="text-center mb-6">
                   <div className="font-medium text-lg theme-text-primary">{user.username}</div>
                 </div>
                 
-                {/* 个人资料链接 */}
-                <div className="text-center mb-6">
-                  <Link
-                    to="/profile"
-                    onClick={() => setShowProfileDrawer(false)}
-                    className="text-sm theme-text-primary hover:text-runeterra-gold transition-colors"
-                  >
-                    个人资料
-                  </Link>
+                <div className="border-t border-runeterra-gold/20 my-4"></div>
+                
+                {/* 个人资料 - 与主题模式同一级别 */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      to="/profile"
+                      onClick={() => setShowProfileDrawer(false)}
+                      className="text-sm theme-text-primary hover:text-runeterra-gold transition-colors"
+                    >
+                      个人资料
+                    </Link>
+                  </div>
                 </div>
                 
                 <div className="border-t border-runeterra-gold/20 my-4"></div>

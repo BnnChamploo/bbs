@@ -32,16 +32,22 @@
         }
       }
       
-      // 构建新的 URL
-      var newUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + path + search + l.hash;
-      
-      // 重定向到正确的路径
-      if (l.href !== newUrl) {
-        l.replace(newUrl);
-      } else {
-        // 如果已经是正确路径，加载 index.html
-        window.location.href = basePath + '/index.html' + search + l.hash;
+      // 移除路径末尾的 index.html（如果存在）
+      if (path.endsWith('/index.html')) {
+        path = path.replace(/\/index\.html$/, '');
       }
+      
+      // 确保路径不以 / 结尾（除非是根路径）
+      if (path !== basePath && path !== basePath + '/' && path.endsWith('/')) {
+        path = path.slice(0, -1);
+      }
+      
+      // 构建新的 URL，直接重定向到 index.html
+      var newUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
+        (path === basePath ? basePath + '/' : path) + '/index.html' + search + l.hash;
+      
+      // 重定向到 index.html
+      l.replace(newUrl);
     </script>
   </head>
   <body>

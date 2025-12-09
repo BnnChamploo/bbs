@@ -180,12 +180,12 @@ const Home = () => {
                       </div>
                       <span className="text-runeterra-gold">{post.username || '匿名用户'}</span>
                       {post.user_title && (
-                        <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 py-0.5 rounded hidden sm:inline">
+                        <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 py-0.5 rounded">
                           {post.user_title}
                         </span>
                       )}
                       {post.identity && (
-                        <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-1 py-0.5 rounded hidden sm:inline">
+                        <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-1 py-0.5 rounded">
                           {post.identity}
                         </span>
                       )}

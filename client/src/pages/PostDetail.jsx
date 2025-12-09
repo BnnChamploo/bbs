@@ -285,12 +285,12 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
             <span className="text-xs md:text-sm theme-text-muted">#{reply.floor_number || index + 1}</span>
             <span className="text-xs md:text-sm text-runeterra-gold font-medium">{reply.username || '匿名用户'}</span>
             {reply.user_title && (
-              <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 md:px-2 py-0.5 md:py-1 rounded hidden sm:inline">
+              <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 md:px-2 py-0.5 md:py-1 rounded">
                 {reply.user_title}
               </span>
             )}
             {reply.user_identity && (
-              <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-1 md:px-2 py-0.5 md:py-1 rounded hidden sm:inline">
+              <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-1 md:px-2 py-0.5 md:py-1 rounded">
                 {reply.user_identity}
               </span>
             )}
@@ -832,12 +832,12 @@ const PostDetail = ({ user }) => {
                 </div>
                 <span className="text-runeterra-gold">{post.username || '匿名用户'}</span>
                 {post.user_title && (
-                  <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 md:px-2 py-0.5 md:py-1 rounded hidden sm:inline">
+                  <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 md:px-2 py-0.5 md:py-1 rounded">
                     {post.user_title}
                   </span>
                 )}
                 {post.user_identity && (
-                  <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-1 md:px-2 py-0.5 md:py-1 rounded hidden sm:inline">
+                  <span className="text-xs bg-runeterra-blue/30 text-runeterra-blue px-1 md:px-2 py-0.5 md:py-1 rounded">
                     {post.user_identity}
                   </span>
                 )}
