@@ -21,70 +21,67 @@
           // 注意：只保存查询参数和hash，不包含路径
           sessionStorage.setItem('redirectPath', l.search + l.hash);
           l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + indexPath);
-        } else {
-          // 已经是正确的路径，不需要重定向
-          return;
         }
-      }
-      
-      // 如果路径以 /index.html 结尾，说明已经在重定向循环中，直接返回
-      if (l.pathname.endsWith('/index.html') && l.pathname !== indexPath) {
-        // 已经在重定向循环中，直接跳转到根路径
+        // 如果已经是正确的路径且没有查询参数，不执行后续代码（通过条件判断实现）
+        // 注意：不能使用 return，因为这是顶层脚本，不是函数
+      } else if (l.pathname.endsWith('/index.html') && l.pathname !== indexPath) {
+        // 如果路径以 /index.html 结尾但不是正确的 indexPath，说明已经在重定向循环中
+        // 直接跳转到根路径
         l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + indexPath);
-        return;
-      }
-      
-      // 处理 URL 中的 ?/ 格式（旧的重定向格式）
-      var path = l.pathname;
-      var search = l.search;
-      var hash = l.hash;
-      
-      // 如果 URL 包含 ?/ 格式，提取实际路径
-      if (search.includes('?/')) {
-        var parts = search.split('?/');
-        if (parts.length > 1) {
-          path = basePath + '/' + parts[1].replace(/~and~/g, '&').split('&')[0];
-          search = '';
+      } else {
+        // 处理其他路径（非根路径，非 index.html）
+        // 处理 URL 中的 ?/ 格式（旧的重定向格式）
+        var path = l.pathname;
+        var search = l.search;
+        var hash = l.hash;
+        
+        // 如果 URL 包含 ?/ 格式，提取实际路径
+        if (search.includes('?/')) {
+          var parts = search.split('?/');
+          if (parts.length > 1) {
+            path = basePath + '/' + parts[1].replace(/~and~/g, '&').split('&')[0];
+            search = '';
+          }
         }
-      }
-      
-      // 移除路径中的 index.html（如果存在）
-      path = path.replace(/\/index\.html$/, '');
-      
-      // 确保路径以 base path 开头
-      if (!path.startsWith(basePath)) {
-        if (path === '/' || path === '') {
-          path = basePath + '/';
-        } else {
-          path = basePath + path;
+        
+        // 移除路径中的 index.html（如果存在）
+        path = path.replace(/\/index\.html$/, '');
+        
+        // 确保路径以 base path 开头
+        if (!path.startsWith(basePath)) {
+          if (path === '/' || path === '') {
+            path = basePath + '/';
+          } else {
+            path = basePath + path;
+          }
         }
-      }
-      
-      // 确保路径不以 / 结尾（除非是根路径）
-      if (path !== basePath && path !== basePath + '/' && path.endsWith('/')) {
-        path = path.slice(0, -1);
-      }
-      
-      // 构建新的 URL：重定向到根路径的 index.html
-      // 将原始路径保存到 sessionStorage，React Router 会读取并处理
-      if (path !== basePath && path !== basePath + '/') {
-        // 移除 basePath 前缀，因为 React Router 的 basename 会自动处理
-        var routerPath = path;
-        if (path.startsWith(basePath)) {
-          routerPath = path.slice(basePath.length) || '/';
+        
+        // 确保路径不以 / 结尾（除非是根路径）
+        if (path !== basePath && path !== basePath + '/' && path.endsWith('/')) {
+          path = path.slice(0, -1);
         }
-        // 确保路径以 / 开头
-        if (!routerPath.startsWith('/')) {
-          routerPath = '/' + routerPath;
+        
+        // 构建新的 URL：重定向到根路径的 index.html
+        // 将原始路径保存到 sessionStorage，React Router 会读取并处理
+        if (path !== basePath && path !== basePath + '/') {
+          // 移除 basePath 前缀，因为 React Router 的 basename 会自动处理
+          var routerPath = path;
+          if (path.startsWith(basePath)) {
+            routerPath = path.slice(basePath.length) || '/';
+          }
+          // 确保路径以 / 开头
+          if (!routerPath.startsWith('/')) {
+            routerPath = '/' + routerPath;
+          }
+          sessionStorage.setItem('redirectPath', routerPath + search + hash);
         }
-        sessionStorage.setItem('redirectPath', routerPath + search + hash);
+        
+        // 重定向到 index.html（只重定向一次，避免死循环）
+        var newUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
+          indexPath;
+        
+        l.replace(newUrl);
       }
-      
-      // 重定向到 index.html（只重定向一次，避免死循环）
-      var newUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
-        indexPath;
-      
-      l.replace(newUrl);
     </script>
   </head>
   <body>
@@ -94,5 +91,3 @@
     </div>
   </body>
 </html>
-
-
