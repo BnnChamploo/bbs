@@ -295,17 +295,6 @@ const Navbar = ({ user, onLogout }) => {
                   >
                     ☀️ 浅色
                   </button>
-                  <div className="px-3 py-2 text-xs theme-text-muted border-t border-runeterra-gold/20 mt-1">
-                    模式
-                  </div>
-                  <button
-                    onClick={() => { handleModeToggle(); setShowThemeMenu(false); }}
-                    className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
-                      editMode ? 'bg-runeterra-purple/20 text-runeterra-purple' : 'theme-dropdown-item'
-                    }`}
-                  >
-                    {editMode ? '✏️ 编辑模式' : '👁️ 展示模式'}
-                  </button>
                 </div>
               )}
             </div>
@@ -330,40 +319,54 @@ const Navbar = ({ user, onLogout }) => {
                   </svg>
                 </Link>
                 {/* 桌面端：保持原有样式 */}
-                <div className="hidden md:block relative group">
-                  <Link
-                    to="/profile"
-                    className="flex items-center space-x-2 theme-nav-link hover:text-runeterra-gold transition-colors"
-                  >
-                    <div className="relative w-8 h-8">
-                      {getAvatarUrl(user.avatar) ? (
-                        <img
-                          src={getAvatarUrl(user.avatar)}
-                          alt={user.username}
-                          className="w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            const fallback = e.target.nextElementSibling;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div className={`absolute inset-0 w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-sm font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
-                        {user.username?.[0]?.toUpperCase() || '?'}
+                <div className="hidden md:flex items-center space-x-3">
+                  <div className="relative group">
+                    <Link
+                      to="/profile"
+                      className="flex items-center space-x-2 theme-nav-link hover:text-runeterra-gold transition-colors"
+                    >
+                      <div className="relative w-8 h-8">
+                        {getAvatarUrl(user.avatar) ? (
+                          <img
+                            src={getAvatarUrl(user.avatar)}
+                            alt={user.username}
+                            className="w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              const fallback = e.target.nextElementSibling;
+                              if (fallback) fallback.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div className={`absolute inset-0 w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-sm font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
+                          {user.username?.[0]?.toUpperCase() || '?'}
+                        </div>
+                      </div>
+                      <span className="hidden md:inline">{user.username}</span>
+                    </Link>
+                    <div className="absolute top-full right-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      <div className="theme-dropdown border border-runeterra-gold/30 rounded-md shadow-lg min-w-[100px]">
+                        <button
+                          onClick={onLogout}
+                          className="block w-full text-left px-4 py-2 text-sm theme-dropdown-item hover:text-red-400 transition-colors rounded-md"
+                        >
+                          退出登录
+                        </button>
                       </div>
                     </div>
-                    <span className="hidden md:inline">{user.username}</span>
-                  </Link>
-                  <div className="absolute top-full right-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    <div className="theme-dropdown border border-runeterra-gold/30 rounded-md shadow-lg min-w-[100px]">
-                      <button
-                        onClick={onLogout}
-                        className="block w-full text-left px-4 py-2 text-sm theme-dropdown-item hover:text-red-400 transition-colors rounded-md"
-                      >
-                        退出登录
-                      </button>
-                    </div>
                   </div>
+                  
+                  {/* 桌面端：编辑模式按钮 */}
+                  <button
+                    onClick={handleModeToggle}
+                    className={`px-3 py-2 rounded-md transition-colors font-medium text-sm ${
+                      editMode 
+                        ? 'bg-runeterra-purple text-white hover:bg-purple-600' 
+                        : 'theme-button hover:bg-runeterra-gold/20'
+                    }`}
+                  >
+                    {editMode ? '编辑模式' : '展示模式'}
+                  </button>
                 </div>
                 
                 {/* 移动端：头像按钮，点击打开右侧 drawer */}

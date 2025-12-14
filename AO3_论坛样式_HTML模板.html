@@ -1,0 +1,89 @@
+<!-- 
+AO3 论坛样式 HTML 模板
+使用方法：
+1. 在 AO3 中创建一个 Work Skin（作品样式）
+2. 将 CSS 代码复制到 Work Skin 中
+3. 在作品编辑页面，选择你创建的 Work Skin
+4. 在 "Work Text" 的 HTML 模式中，使用下面的 HTML 结构
+-->
+
+<!-- 帖子主体 -->
+<div class="forum-container">
+  <article class="forum-post">
+    <h1 class="forum-post-title">帖子标题</h1>
+    
+    <div class="forum-post-meta">
+      <div class="forum-avatar">A</div>
+      <span class="forum-username">作者名</span>
+      <span class="forum-badge badge-title">头衔</span>
+      <span class="forum-badge badge-identity">身份</span>
+      <span class="badge-rank">坚韧黑铁</span>
+      <span class="forum-meta-text">| 发布于 瓦罗兰新历时间</span>
+      <span class="forum-meta-text">| 来自 地区</span>
+      <span class="forum-meta-text">| 点赞(0)</span>
+    </div>
+    
+    <div class="forum-post-content">
+      <p>这里是帖子正文内容。你可以使用 HTML 标签来格式化文本。</p>
+      <p><strong>粗体文本</strong>、<em>斜体文本</em>、<u>下划线文本</u>都可以使用。</p>
+      <p>也可以插入图片：</p>
+      <img src="图片URL" alt="描述" />
+      <p>支持列表：</p>
+      <ul>
+        <li>列表项 1</li>
+        <li>列表项 2</li>
+      </ul>
+      <p>支持引用：</p>
+      <blockquote>
+        <p>这是引用内容</p>
+      </blockquote>
+    </div>
+  </article>
+  
+  <!-- 回复区域 -->
+  <div class="forum-replies">
+    <h2 class="forum-replies-title">回复区</h2>
+    
+    <!-- 回复 1 -->
+    <div class="forum-reply">
+      <div class="forum-reply-header">
+        <div class="forum-reply-avatar">B</div>
+        <div class="forum-reply-meta">
+          <span class="forum-reply-floor">#1</span>
+          <span class="forum-reply-username">回复者名</span>
+          <span class="forum-badge badge-title">头衔</span>
+          <span class="forum-badge badge-identity">身份</span>
+          <span class="badge-rank">坚韧黑铁</span>
+          <span class="forum-meta-text">| 发布于 时间</span>
+          <span class="forum-meta-text">| 来自 地区</span>
+          <span class="forum-meta-text">| 点赞(0)</span>
+        </div>
+      </div>
+      <div class="forum-reply-content">
+        <p>这是第一条回复的内容。</p>
+      </div>
+    </div>
+    
+    <hr class="forum-divider" />
+    
+    <!-- 回复 2 -->
+    <div class="forum-reply">
+      <div class="forum-reply-header">
+        <div class="forum-reply-avatar">C</div>
+        <div class="forum-reply-meta">
+          <span class="forum-reply-floor">#2</span>
+          <span class="forum-reply-username">另一个回复者</span>
+          <span class="badge-rank">坚韧黑铁</span>
+          <span class="forum-meta-text">| 发布于 时间</span>
+          <span class="forum-meta-text">| 点赞(0)</span>
+        </div>
+      </div>
+      <div class="forum-reply-content">
+        <p>这是第二条回复的内容。</p>
+        <p>可以有多段内容。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+

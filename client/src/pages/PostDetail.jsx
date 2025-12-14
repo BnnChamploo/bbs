@@ -570,8 +570,22 @@ const PostDetail = ({ user }) => {
 
   const handlePostUpdate = async () => {
     try {
-      await api.put(`/posts/${id}`, editingPost);
-      setPost(editingPost);
+      // 如果选择了用户ID，但该用户可能不存在，尝试从用户列表中获取用户名
+      let postData = { ...editingPost };
+      if (postData.user_id && !postData.custom_username) {
+        const selectedUser = users.find(u => u.id === postData.user_id);
+        if (!selectedUser && postData._selected_username) {
+          // 用户不存在，但保存了用户名，使用用户名作为自定义用户名
+          postData.custom_username = postData._selected_username;
+          postData.user_id = null;
+        }
+      }
+      // 移除临时字段
+      delete postData._selected_username;
+      
+      await api.put(`/posts/${id}`, postData);
+      // 重新获取帖子数据以显示正确的用户名等信息
+      await fetchPost();
       alert('帖子更新成功！');
     } catch (error) {
       console.error('更新帖子失败:', error);
@@ -582,8 +596,21 @@ const PostDetail = ({ user }) => {
 
   const handleSaveAll = async () => {
     try {
+      // 如果选择了用户ID，但该用户可能不存在，尝试从用户列表中获取用户名
+      let postData = { ...editingPost };
+      if (postData.user_id && !postData.custom_username) {
+        const selectedUser = users.find(u => u.id === postData.user_id);
+        if (!selectedUser && postData._selected_username) {
+          // 用户不存在，但保存了用户名，使用用户名作为自定义用户名
+          postData.custom_username = postData._selected_username;
+          postData.user_id = null;
+        }
+      }
+      // 移除临时字段
+      delete postData._selected_username;
+      
       // 保存帖子
-      await api.put(`/posts/${id}`, editingPost);
+      await api.put(`/posts/${id}`, postData);
       
       // 保存所有回复
       for (const reply of editingReplies) {
@@ -597,8 +624,9 @@ const PostDetail = ({ user }) => {
       }));
       await api.put(`/posts/${id}/replies/order`, { replyOrders });
       
-      fetchPost();
-      fetchReplies();
+      // 重新获取帖子数据以显示正确的用户名和回复数等信息
+      await fetchPost();
+      await fetchReplies();
       alert('所有更改已保存！');
     } catch (error) {
       console.error('保存失败:', error);
@@ -658,17 +686,54 @@ const PostDetail = ({ user }) => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <div>
-                <label className="block theme-label mb-2 font-medium text-sm md:text-base">用户</label>
-                <select
-                  value={editingPost.user_id || ''}
-                  onChange={(e) => setEditingPost({ ...editingPost, user_id: parseInt(e.target.value) || null })}
-                  className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
-                >
-                  <option value="">匿名</option>
-                  {users.map(u => (
-                    <option key={u.id} value={u.id}>{u.username}</option>
-                  ))}
-                </select>
+                <label className="block theme-label mb-2 font-medium text-sm md:text-base">发帖人</label>
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2 mb-1">
+                    <input
+                      type="checkbox"
+                      checked={!!editingPost.custom_username}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setEditingPost({ ...editingPost, custom_username: editingPost.username || '', user_id: null });
+                        } else {
+                          setEditingPost({ ...editingPost, custom_username: null, user_id: editingPost.user_id || null });
+                        }
+                      }}
+                      className="w-3 h-3"
+                    />
+                    <span className="text-xs theme-text-secondary">自定义名称</span>
+                  </label>
+                  {editingPost.custom_username !== undefined && editingPost.custom_username !== null ? (
+                    <input
+                      type="text"
+                      value={editingPost.custom_username || ''}
+                      onChange={(e) => setEditingPost({ ...editingPost, custom_username: e.target.value, user_id: null })}
+                      placeholder="输入发帖人名称"
+                      className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
+                    />
+                  ) : (
+                    <select
+                      value={editingPost.user_id || ''}
+                      onChange={(e) => {
+                        const selectedUserId = e.target.value || null;
+                        const selectedUser = selectedUserId ? users.find(u => String(u.id) === String(selectedUserId)) : null;
+                        setEditingPost({ 
+                          ...editingPost, 
+                          user_id: selectedUserId, // 保持原始类型（字符串或数字）
+                          custom_username: null,
+                          // 保存用户名，以便在保存时如果找不到用户可以使用
+                          _selected_username: selectedUser?.username || null
+                        });
+                      }}
+                      className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
+                    >
+                      <option value="">匿名</option>
+                      {users.map(u => (
+                        <option key={u.id} value={u.id}>{u.username}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="block theme-label mb-2 font-medium text-sm md:text-base">匿名</label>
@@ -849,7 +914,7 @@ const PostDetail = ({ user }) => {
               <span className="text-gray-400 hidden sm:inline"> | </span>
               <span className="text-gray-400 whitespace-nowrap">浏览量({post.views || 0})</span>
               <span className="text-gray-400 hidden sm:inline"> | </span>
-              <span className="text-gray-400 whitespace-nowrap">评论({replies.length})</span>
+              <span className="text-gray-400 whitespace-nowrap">评论({post.replies_count !== undefined ? post.replies_count : replies.length})</span>
               <span className="text-gray-400 hidden sm:inline"> | </span>
               <span className="text-gray-400 whitespace-nowrap">收藏({post.likes || 0})</span>
             </div>

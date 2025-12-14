@@ -56,8 +56,11 @@ export function saveUser(user) {
 }
 
 export function findUserById(id) {
+  if (!id) return null;
   const users = getUsers();
-  return users.find(u => u.id === id) || null;
+  const idStr = String(id);
+  // 尝试严格匹配和字符串匹配（因为ID可能是字符串或数字）
+  return users.find(u => u.id === id || String(u.id) === idStr) || null;
 }
 
 export function findUserByUsername(username) {

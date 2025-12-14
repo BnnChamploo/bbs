@@ -70,7 +70,9 @@ const api = {
       
       // 关联用户信息
       posts = posts.map(post => {
-        const user = storage.findUserById(post.user_id) || getHeroUsers().find(u => u.id === post.user_id);
+        const userIdStr = post.user_id ? String(post.user_id) : null;
+        const user = storage.findUserById(post.user_id) || 
+                    (userIdStr ? getHeroUsers().find(u => String(u.id) === userIdStr) : null);
         return {
           ...post,
           username: post.is_anonymous ? '匿名用户' : (user?.username || '未知用户'),
@@ -126,8 +128,10 @@ const api = {
             identity = reply.user_identity || '';
           }
         } else {
-          // 使用用户ID查找用户
-          user = storage.findUserById(reply.user_id) || getHeroUsers().find(u => u.id === reply.user_id);
+          // 使用用户ID查找用户（尝试字符串和数字两种方式）
+          const userIdStr = reply.user_id ? String(reply.user_id) : null;
+          user = storage.findUserById(reply.user_id) || 
+                (userIdStr ? getHeroUsers().find(u => String(u.id) === userIdStr) : null);
           username = user?.username || '未知用户';
           avatar = user?.avatar || 'avatars/default-avatar.png';
           rank = reply.user_rank || user?.rank || '坚韧黑铁';
@@ -201,14 +205,49 @@ const api = {
       storage.savePost(post);
       
       // 关联用户信息
-      const user = storage.findUserById(post.user_id) || getHeroUsers().find(u => u.id === post.user_id);
+      let postUser = null;
+      let postUsername = '未知用户';
+      let postAvatar = 'avatars/default-avatar.png';
+      let postRank = '坚韧黑铁';
+      let postTitle = '';
+      let postIdentity = '';
+      
+      if (post.is_anonymous) {
+        postUsername = '匿名用户';
+      } else if (post.custom_username) {
+        // 使用自定义用户名
+        postUsername = post.custom_username;
+        // 尝试从英雄数据中查找匹配的头像等信息
+        const heroUser = getHeroUsers().find(u => u.username === post.custom_username);
+        if (heroUser) {
+          postAvatar = heroUser.avatar || 'avatars/default-avatar.png';
+          postRank = post.user_rank || heroUser.rank || '坚韧黑铁';
+          postTitle = post.user_title || heroUser.title || '';
+          postIdentity = post.user_identity || heroUser.identity || '';
+        } else {
+          postRank = post.user_rank || '坚韧黑铁';
+          postTitle = post.user_title || '';
+          postIdentity = post.user_identity || '';
+        }
+      } else {
+        // 使用用户ID查找用户（尝试字符串和数字两种方式）
+        const userIdStr = post.user_id ? String(post.user_id) : null;
+        postUser = storage.findUserById(post.user_id) || 
+                  (userIdStr ? getHeroUsers().find(u => String(u.id) === userIdStr) : null);
+        postUsername = postUser?.username || '未知用户';
+        postAvatar = postUser?.avatar || 'avatars/default-avatar.png';
+        postRank = post.user_rank || postUser?.rank || '坚韧黑铁';
+        postTitle = post.user_title || postUser?.title || '';
+        postIdentity = post.user_identity || postUser?.identity || '';
+      }
+      
       const result = {
         ...post,
-        username: post.is_anonymous ? '匿名用户' : (user?.username || '未知用户'),
-        avatar: post.is_anonymous ? 'avatars/default-avatar.png' : (user?.avatar || 'avatars/default-avatar.png'),
-        rank: post.is_anonymous ? '坚韧黑铁' : (post.user_rank || user?.rank || '坚韧黑铁'),
-        user_title: post.is_anonymous ? '' : (post.user_title || user?.title || ''),
-        identity: post.is_anonymous ? '' : (post.user_identity || user?.identity || ''),
+        username: postUsername,
+        avatar: postAvatar,
+        rank: postRank,
+        user_title: postTitle,
+        identity: postIdentity,
         replies_count: post.custom_replies_count !== undefined 
           ? post.custom_replies_count 
           : storage.getRepliesByPostId(post.id).length,
@@ -379,14 +418,49 @@ const api = {
       });
       
       // 关联用户信息返回
-      const postUser = storage.findUserById(post.user_id) || getHeroUsers().find(u => u.id === post.user_id);
+      let postUser = null;
+      let postUsername = '未知用户';
+      let postAvatar = 'avatars/default-avatar.png';
+      let postRank = '坚韧黑铁';
+      let postTitle = '';
+      let postIdentity = '';
+      
+      if (post.is_anonymous) {
+        postUsername = '匿名用户';
+      } else if (post.custom_username) {
+        // 使用自定义用户名
+        postUsername = post.custom_username;
+        // 尝试从英雄数据中查找匹配的头像等信息
+        const heroUser = getHeroUsers().find(u => u.username === post.custom_username);
+        if (heroUser) {
+          postAvatar = heroUser.avatar || 'avatars/default-avatar.png';
+          postRank = post.user_rank || heroUser.rank || '坚韧黑铁';
+          postTitle = post.user_title || heroUser.title || '';
+          postIdentity = post.user_identity || heroUser.identity || '';
+        } else {
+          postRank = post.user_rank || '坚韧黑铁';
+          postTitle = post.user_title || '';
+          postIdentity = post.user_identity || '';
+        }
+      } else {
+        // 使用用户ID查找用户（尝试字符串和数字两种方式）
+        const userIdStr = post.user_id ? String(post.user_id) : null;
+        postUser = storage.findUserById(post.user_id) || 
+                  (userIdStr ? getHeroUsers().find(u => String(u.id) === userIdStr) : null);
+        postUsername = postUser?.username || '未知用户';
+        postAvatar = postUser?.avatar || 'avatars/default-avatar.png';
+        postRank = post.user_rank || postUser?.rank || '坚韧黑铁';
+        postTitle = post.user_title || postUser?.title || '';
+        postIdentity = post.user_identity || postUser?.identity || '';
+      }
+      
       return createResponse({
         ...post,
-        username: post.is_anonymous ? '匿名用户' : (postUser?.username || '未知用户'),
-        avatar: post.is_anonymous ? 'avatars/default-avatar.png' : (postUser?.avatar || 'avatars/default-avatar.png'),
-        rank: post.is_anonymous ? '坚韧黑铁' : (post.user_rank || postUser?.rank || '坚韧黑铁'),
-        user_title: post.is_anonymous ? '' : (post.user_title || postUser?.title || ''),
-        identity: post.is_anonymous ? '' : (post.user_identity || postUser?.identity || ''),
+        username: postUsername,
+        avatar: postAvatar,
+        rank: postRank,
+        user_title: postTitle,
+        identity: postIdentity,
         images: Array.isArray(post.images) ? post.images : JSON.parse(post.images || '[]')
       }, 201);
     }
@@ -442,8 +516,10 @@ const api = {
           replyIdentity = reply.user_identity || '';
         }
       } else {
-        // 使用用户ID查找用户
-        replyUser = storage.findUserById(reply.user_id) || getHeroUsers().find(u => u.id === reply.user_id);
+        // 使用用户ID查找用户（尝试字符串和数字两种方式）
+        const userIdStr = reply.user_id ? String(reply.user_id) : null;
+        replyUser = storage.findUserById(reply.user_id) || 
+                   (userIdStr ? getHeroUsers().find(u => String(u.id) === userIdStr) : null);
         replyUsername = replyUser?.username || '未知用户';
         replyAvatar = replyUser?.avatar || 'avatars/default-avatar.png';
         replyRank = reply.user_rank || replyUser?.rank || '坚韧黑铁';
@@ -586,8 +662,94 @@ const api = {
         return createError('帖子不存在', 404);
       }
       
-      const updatedPost = storage.savePost({ ...post, ...data, id: postId });
-      return createResponse(updatedPost);
+      // 如果提供了 user_id 但找不到用户，且提供了 _selected_username，自动使用自定义用户名
+      let updateData = { ...data };
+      if (updateData.user_id && !updateData.custom_username && updateData._selected_username) {
+        // 尝试用字符串和数字两种方式查找用户（因为ID可能是字符串或数字）
+        const userIdStr = String(updateData.user_id);
+        const postUser = storage.findUserById(updateData.user_id) || 
+                        storage.getUsers().find(u => String(u.id) === userIdStr) ||
+                        getHeroUsers().find(u => String(u.id) === userIdStr);
+        if (!postUser) {
+          // 用户不存在，使用用户名作为自定义用户名
+          updateData.custom_username = updateData._selected_username;
+          updateData.user_id = null;
+        }
+      }
+      // 移除临时字段
+      delete updateData._selected_username;
+      
+      const updatedPost = storage.savePost({ ...post, ...updateData, id: postId });
+      
+      // 关联用户信息返回（与获取帖子详情时相同的逻辑）
+      let postUser = null;
+      let postUsername = '未知用户';
+      let postAvatar = 'avatars/default-avatar.png';
+      let postRank = '坚韧黑铁';
+      let postTitle = '';
+      let postIdentity = '';
+      
+      if (updatedPost.is_anonymous) {
+        postUsername = '匿名用户';
+      } else if (updatedPost.custom_username) {
+        // 使用自定义用户名
+        postUsername = updatedPost.custom_username;
+        // 尝试从英雄数据中查找匹配的头像等信息
+        const heroUser = getHeroUsers().find(u => u.username === updatedPost.custom_username);
+        if (heroUser) {
+          postAvatar = heroUser.avatar || 'avatars/default-avatar.png';
+          postRank = updatedPost.user_rank || heroUser.rank || '坚韧黑铁';
+          postTitle = updatedPost.user_title || heroUser.title || '';
+          postIdentity = updatedPost.user_identity || heroUser.identity || '';
+        } else {
+          postRank = updatedPost.user_rank || '坚韧黑铁';
+          postTitle = updatedPost.user_title || '';
+          postIdentity = updatedPost.user_identity || '';
+        }
+      } else {
+        // 使用用户ID查找用户（尝试字符串和数字两种方式）
+        const userIdStr = String(updatedPost.user_id);
+        postUser = storage.findUserById(updatedPost.user_id) || 
+                  storage.getUsers().find(u => String(u.id) === userIdStr) ||
+                  getHeroUsers().find(u => String(u.id) === userIdStr);
+        
+        if (!postUser && updatedPost.user_id) {
+          // 如果找不到用户，但提供了用户ID，尝试从英雄数据中通过ID查找
+          // 或者，如果数据中有 username 字段，使用它作为自定义用户名
+          if (updatedPost.username) {
+            // 如果返回的数据中有 username，说明可能是自定义用户名
+            postUsername = updatedPost.username;
+            postRank = updatedPost.user_rank || '坚韧黑铁';
+            postTitle = updatedPost.user_title || '';
+            postIdentity = updatedPost.user_identity || '';
+          } else {
+            postUsername = '未知用户';
+            postAvatar = 'avatars/default-avatar.png';
+            postRank = updatedPost.user_rank || '坚韧黑铁';
+            postTitle = updatedPost.user_title || '';
+            postIdentity = updatedPost.user_identity || '';
+          }
+        } else {
+          postUsername = postUser?.username || '未知用户';
+          postAvatar = postUser?.avatar || 'avatars/default-avatar.png';
+          postRank = updatedPost.user_rank || postUser?.rank || '坚韧黑铁';
+          postTitle = updatedPost.user_title || postUser?.title || '';
+          postIdentity = updatedPost.user_identity || postUser?.identity || '';
+        }
+      }
+      
+      return createResponse({
+        ...updatedPost,
+        username: postUsername,
+        avatar: postAvatar,
+        rank: postRank,
+        user_title: postTitle,
+        identity: postIdentity,
+        replies_count: updatedPost.custom_replies_count !== undefined 
+          ? updatedPost.custom_replies_count 
+          : storage.getRepliesByPostId(updatedPost.id).length,
+        images: typeof updatedPost.images === 'string' ? JSON.parse(updatedPost.images || '[]') : (updatedPost.images || [])
+      });
     }
     
     // 更新回复
@@ -627,8 +789,10 @@ const api = {
           replyIdentity = updatedReply.user_identity || '';
         }
       } else {
-        // 使用用户ID查找用户
-        replyUser = storage.findUserById(updatedReply.user_id) || getHeroUsers().find(u => u.id === updatedReply.user_id);
+        // 使用用户ID查找用户（尝试字符串和数字两种方式）
+        const userIdStr = updatedReply.user_id ? String(updatedReply.user_id) : null;
+        replyUser = storage.findUserById(updatedReply.user_id) || 
+                   (userIdStr ? getHeroUsers().find(u => String(u.id) === userIdStr) : null);
         replyUsername = replyUser?.username || '未知用户';
         replyAvatar = replyUser?.avatar || 'avatars/default-avatar.png';
         replyRank = updatedReply.user_rank || replyUser?.rank || '坚韧黑铁';

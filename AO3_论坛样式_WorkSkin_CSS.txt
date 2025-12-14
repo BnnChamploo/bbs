@@ -1,0 +1,237 @@
+/* 
+AO3 Work Skin CSS - 论坛样式
+使用方法：
+1. 在 AO3 中，进入 "Skins" -> "Create Work Skin"
+2. 给 Skin 起个名字，比如 "论坛样式"
+3. 将下面的 CSS 代码复制到 "CSS" 文本框中
+4. 保存 Skin
+5. 在作品编辑页面，在 "Select Work Skin" 下拉菜单中选择你创建的 Skin
+6. 然后在 "Work Text" 中使用 HTML 模板
+*/
+
+/* 论坛容器 */
+.forum-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #0A1428 0%, #1a1a2e 100%);
+  color: #d1d5db;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* 帖子卡片 */
+.forum-post {
+  background: rgba(26, 26, 46, 0.8);
+  border: 1px solid rgba(201, 170, 113, 0.3);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* 帖子标题 */
+.forum-post-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #d1d5db;
+  margin-bottom: 16px;
+  border-bottom: 2px solid rgba(201, 170, 113, 0.5);
+  padding-bottom: 12px;
+}
+
+/* 帖子作者信息 */
+.forum-post-meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.forum-post-meta > * {
+  margin-right: 12px;
+}
+
+.forum-post-meta > *:last-child {
+  margin-right: 0;
+}
+
+.forum-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #C9AA71;
+  background: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C9AA71;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.forum-username {
+  color: #C9AA71;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.forum-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-title {
+  background: rgba(139, 92, 246, 0.3);
+  color: #a78bfa;
+}
+
+.badge-identity {
+  background: rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+
+.badge-rank {
+  color: #C9AA71;
+  font-size: 12px;
+}
+
+.forum-meta-text {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* 帖子正文 */
+.forum-post-content {
+  color: #d1d5db;
+  line-height: 1.8;
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.forum-post-content p {
+  margin-bottom: 12px;
+}
+
+.forum-post-content img {
+  max-width: 100%;
+  border-radius: 4px;
+  margin: 12px 0;
+}
+
+/* 回复区域 */
+.forum-replies {
+  margin-top: 32px;
+}
+
+.forum-replies-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #C9AA71;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(201, 170, 113, 0.3);
+  padding-bottom: 8px;
+}
+
+/* 单个回复 */
+.forum-reply {
+  background: rgba(26, 26, 46, 0.6);
+  border: 1px solid rgba(201, 170, 113, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 3px solid rgba(201, 170, 113, 0.5);
+}
+
+.forum-reply-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.forum-reply-header > * {
+  margin-right: 12px;
+}
+
+.forum-reply-header > *:last-child {
+  margin-right: 0;
+}
+
+.forum-reply-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #C9AA71;
+  background: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C9AA71;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.forum-reply-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.forum-reply-meta > * {
+  margin-right: 8px;
+}
+
+.forum-reply-meta > *:last-child {
+  margin-right: 0;
+}
+
+.forum-reply-floor {
+  color: #9ca3af;
+}
+
+.forum-reply-username {
+  color: #C9AA71;
+  font-weight: 500;
+}
+
+.forum-reply-content {
+  color: #d1d5db;
+  line-height: 1.7;
+  font-size: 15px;
+  margin-top: 12px;
+}
+
+.forum-reply-content p {
+  margin-bottom: 8px;
+}
+
+/* 分隔线 */
+.forum-divider {
+  border: none;
+  border-top: 1px solid rgba(201, 170, 113, 0.2);
+  margin: 16px 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .forum-container {
+    padding: 12px;
+  }
+  
+  .forum-post {
+    padding: 16px;
+  }
+  
+  .forum-post-title {
+    font-size: 22px;
+  }
+  
+  .forum-reply {
+    padding: 12px;
+  }
+}
+
