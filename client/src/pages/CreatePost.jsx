@@ -4,6 +4,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import api from '../utils/api';
 import { getImageUrl } from '../utils/image';
+import SearchableUserSelect from '../components/SearchableUserSelect';
 
 const CreatePost = ({ user }) => {
   const navigate = useNavigate();
@@ -460,17 +461,13 @@ const CreatePost = ({ user }) => {
         <div className="mb-4 md:mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           <div>
             <label className="block theme-label mb-2 font-medium text-sm md:text-base">发帖人</label>
-            <select
+            <SearchableUserSelect
               value={selectedUserId}
-              onChange={(e) => setSelectedUserId(e.target.value)}
+              onChange={(userId) => setSelectedUserId(userId)}
+              users={users}
               disabled={isAnonymous}
-              className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
-            >
-              <option value="">选择用户</option>
-              {users.map(u => (
-                <option key={u.id} value={u.id}>{u.username}</option>
-              ))}
-            </select>
+              placeholder="搜索或选择用户"
+            />
           </div>
           <div className="flex items-end">
             <label className="flex items-center space-x-2">

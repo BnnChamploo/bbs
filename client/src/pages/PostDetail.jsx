@@ -9,9 +9,11 @@ import api from '../utils/api';
 import { formatRuneterraTime } from '../utils/runeterraTime';
 import { getAvatarUrl } from '../utils/avatar';
 import { getImageUrl } from '../utils/image';
+import { formatContentWithMentions } from '../utils/formatContent';
+import SearchableUserSelect from '../components/SearchableUserSelect';
 
 // 可拖拽的回复项组件
-const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, regions }) => {
+const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, regions, onReplyToFloor, postAuthorId, postAuthorUsername }) => {
   const replyQuillRef = useRef(null);
   const {
     attributes,
@@ -129,16 +131,13 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
                     className="w-full px-2 py-1 theme-input rounded text-sm"
                   />
                 ) : (
-                  <select
+                  <SearchableUserSelect
                     value={reply.user_id || ''}
-                    onChange={(e) => onEdit(reply.id, { user_id: parseInt(e.target.value) || null, custom_username: null })}
-                    className="w-full px-2 py-1 theme-input rounded text-sm"
-                  >
-                    <option value="">匿名</option>
-                    {users.map(u => (
-                      <option key={u.id} value={u.id}>{u.username}</option>
-                    ))}
-                  </select>
+                    onChange={(userId) => onEdit(reply.id, { user_id: userId || null, custom_username: null })}
+                    users={users}
+                    placeholder="搜索或选择用户"
+                    className="text-sm"
+                  />
                 )}
               </div>
             </div>
@@ -165,7 +164,7 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
                 type="text"
                 value={reply.custom_time || ''}
                 onChange={(e) => onEdit(reply.id, { custom_time: e.target.value })}
-                placeholder="瓦罗兰新历时间"
+                  placeholder="瓦罗兰新历时间"
                 className="w-full px-2 py-1 theme-input rounded text-sm"
               />
             </div>
@@ -284,6 +283,14 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
           <div className="flex items-center flex-wrap gap-1 md:gap-2 mb-1">
             <span className="text-xs md:text-sm theme-text-muted">#{reply.floor_number || index + 1}</span>
             <span className="text-xs md:text-sm text-runeterra-gold font-medium">{reply.username || '匿名用户'}</span>
+            {/* 判断是否是楼主 */}
+            {((postAuthorId && reply.user_id && String(reply.user_id) === String(postAuthorId)) || 
+              (postAuthorUsername && reply.username && reply.username === postAuthorUsername) ||
+              (postAuthorUsername && reply.custom_username && reply.custom_username === postAuthorUsername)) && (
+              <span className="text-xs bg-runeterra-gold/30 text-runeterra-gold px-1 md:px-2 py-0.5 md:py-1 rounded font-medium">
+                楼主
+              </span>
+            )}
             {reply.user_title && (
               <span className="text-xs bg-runeterra-purple/30 text-runeterra-purple px-1 md:px-2 py-0.5 md:py-1 rounded">
                 {reply.user_title}
@@ -315,10 +322,26 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
               <>
                 <span className="text-gray-400 hidden sm:inline"> | </span>
                 <span className="text-xs md:text-sm text-gray-400 whitespace-nowrap">点赞({reply.likes || 0})</span>
+                <span className="text-gray-400 hidden sm:inline"> | </span>
+                <button
+                  onClick={() => onReplyToFloor && onReplyToFloor(reply)}
+                  className="text-xs md:text-sm text-runeterra-gold hover:text-yellow-400 transition-colors px-1 sm:px-0"
+                >
+                  回复
+                </button>
               </>
             )}
           </div>
-          <div className="theme-text-primary mb-2 text-sm md:text-base" dangerouslySetInnerHTML={{ __html: reply.content }} />
+          {/* 显示引用内容 */}
+          {reply.quoted_reply && (
+            <div className="quoted-reply">
+              <div className="quoted-reply-header">
+                引用 #{reply.quoted_reply.floor_number || reply.quoted_reply.floor} {reply.quoted_reply.username || '匿名用户'}：
+              </div>
+              <div className="quoted-reply-content" dangerouslySetInnerHTML={{ __html: reply.quoted_reply.content }} />
+            </div>
+          )}
+          <div className="theme-text-primary mb-2 text-sm md:text-base" dangerouslySetInnerHTML={{ __html: formatContentWithMentions(reply.content) }} />
           {reply.images && reply.images.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {reply.images.map((img, idx) => {
@@ -354,6 +377,7 @@ const PostDetail = ({ user }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
   const [editingReplies, setEditingReplies] = useState([]);
+  const [replyingToFloor, setReplyingToFloor] = useState(null);
   const postQuillRef = useRef(null);
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -712,26 +736,21 @@ const PostDetail = ({ user }) => {
                       className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
                     />
                   ) : (
-                    <select
+                    <SearchableUserSelect
                       value={editingPost.user_id || ''}
-                      onChange={(e) => {
-                        const selectedUserId = e.target.value || null;
+                      onChange={(selectedUserId) => {
                         const selectedUser = selectedUserId ? users.find(u => String(u.id) === String(selectedUserId)) : null;
                         setEditingPost({ 
                           ...editingPost, 
-                          user_id: selectedUserId, // 保持原始类型（字符串或数字）
+                          user_id: selectedUserId || null, // 保持原始类型（字符串或数字）
                           custom_username: null,
                           // 保存用户名，以便在保存时如果找不到用户可以使用
                           _selected_username: selectedUser?.username || null
                         });
                       }}
-                      className="w-full px-3 md:px-4 py-2 theme-input rounded-md text-sm md:text-base"
-                    >
-                      <option value="">匿名</option>
-                      {users.map(u => (
-                        <option key={u.id} value={u.id}>{u.username}</option>
-                      ))}
-                    </select>
+                      users={users}
+                      placeholder="搜索或选择用户"
+                    />
                   )}
                 </div>
               </div>
@@ -870,12 +889,12 @@ const PostDetail = ({ user }) => {
           </div>
         ) : (
           <>
-            <div className="flex items-center space-x-3 mb-4">
-              <span className={`px-3 py-1 rounded text-sm ${getCategoryColor(post.category)}`}>
+            <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-3 md:mb-4">
+              <span className={`px-3 py-1 rounded text-sm flex-shrink-0 ${getCategoryColor(post.category)}`}>
                 {getCategoryName(post.category)}
               </span>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold theme-text-primary flex-1 min-w-0">{post.title}</h1>
             </div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold theme-text-primary mb-3 md:mb-4">{post.title}</h1>
             <div className="flex items-center flex-wrap gap-2 mb-3 md:mb-4 text-xs sm:text-sm">
               <div className="flex items-center space-x-2">
                 <div className="relative w-6 h-6 md:w-8 md:h-8">
@@ -919,7 +938,7 @@ const PostDetail = ({ user }) => {
               <span className="text-gray-400 whitespace-nowrap">收藏({post.likes || 0})</span>
             </div>
             <div className="prose prose-invert max-w-none mb-6">
-              <div className="theme-text-primary leading-relaxed" dangerouslySetInnerHTML={{ __html: post.content }} />
+              <div className="theme-text-primary leading-relaxed" dangerouslySetInnerHTML={{ __html: formatContentWithMentions(post.content) }} />
             </div>
             {post.images && post.images.length > 0 && (
               <div className="flex flex-wrap gap-2 md:gap-4 mb-4 md:mb-6">
@@ -972,6 +991,13 @@ const PostDetail = ({ user }) => {
                     onDelete={handleReplyDelete}
                     users={users}
                     regions={regions}
+                    postAuthorId={post?.user_id}
+                    postAuthorUsername={post?.username}
+                    onReplyToFloor={(reply) => {
+                      setReplyingToFloor(reply);
+                      // 滚动到回复表单
+                      document.getElementById('reply-form')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }}
                   />
                 ))}
               </div>
@@ -981,14 +1007,18 @@ const PostDetail = ({ user }) => {
       </div>
 
       {!isEditMode && user && (
-        <ReplyForm
-          postId={id}
-          user={user}
-          users={users}
-          regions={regions}
-          replies={replies}
-          onReply={fetchReplies}
-        />
+        <div id="reply-form">
+          <ReplyForm
+            postId={id}
+            user={user}
+            users={users}
+            regions={regions}
+            replies={replies}
+            replyingToFloor={replyingToFloor}
+            onReply={fetchReplies}
+            onClearReplyingToFloor={() => setReplyingToFloor(null)}
+          />
+        </div>
       )}
 
       {user && (
@@ -1016,7 +1046,7 @@ const PostDetail = ({ user }) => {
 };
 
 // 回复表单组件
-const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
+const ReplyForm = ({ postId, user, users, regions, replies, replyingToFloor, onReply, onClearReplyingToFloor }) => {
   const quillRef = useRef(null);
   const [content, setContent] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -1188,6 +1218,15 @@ const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
         }
       }
       
+      // 如果有引用回复，保存引用信息
+      const quotedReplyData = replyingToFloor ? {
+        id: replyingToFloor.id,
+        floor: replyingToFloor.floor_number || replies.findIndex(r => r.id === replyingToFloor.id) + 1,
+        floor_number: replyingToFloor.floor_number || replies.findIndex(r => r.id === replyingToFloor.id) + 1,
+        username: replyingToFloor.username || '匿名用户',
+        content: replyingToFloor.content
+      } : null;
+
       await api.post(`/posts/${postId}/replies`, {
         content,
         is_anonymous: isAnonymous,
@@ -1201,6 +1240,7 @@ const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
         user_id: replyUserId,
         username: replyUsername, // 自定义用户名
         images: [],
+        quoted_reply: quotedReplyData, // 引用回复信息
       });
       setContent('');
       setCustomTime('');
@@ -1217,6 +1257,7 @@ const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
       setCustomUsername('');
       setUseCustomUsername(false);
       setSelectedUserId(user?.id || '');
+      if (onClearReplyingToFloor) onClearReplyingToFloor();
       onReply();
     } catch (error) {
       console.error('发布回复失败:', error);
@@ -1229,6 +1270,25 @@ const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
   return (
     <div className="theme-card rounded-lg p-4 md:p-6 border border-runeterra-gold/20">
       <h3 className="text-base md:text-lg font-bold text-runeterra-gold mb-3 md:mb-4">发表回复</h3>
+      {/* 显示引用内容 */}
+      {replyingToFloor && (
+        <div className="quoted-reply mb-3 sm:mb-4">
+          <div className="flex items-center justify-between quoted-reply-header gap-2">
+            <div className="flex-1 min-w-0 break-words">
+              引用 #{replyingToFloor.floor_number || replies.findIndex(r => r.id === replyingToFloor.id) + 1} {replyingToFloor.username || '匿名用户'}：
+            </div>
+            <button
+              type="button"
+              onClick={onClearReplyingToFloor}
+              className="hover:opacity-70 transition-opacity flex-shrink-0 text-base sm:text-sm leading-none"
+              aria-label="取消引用"
+            >
+              ×
+            </button>
+          </div>
+          <div className="quoted-reply-content max-h-24 sm:max-h-32 overflow-y-auto" dangerouslySetInnerHTML={{ __html: replyingToFloor.content }} />
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
         <div className="theme-input rounded-md">
           <ReactQuill
@@ -1277,17 +1337,14 @@ const ReplyForm = ({ postId, user, users, regions, replies, onReply }) => {
                   className="w-full px-3 py-2 theme-input rounded-md text-sm"
                 />
               ) : (
-                <select
+                <SearchableUserSelect
                   value={selectedUserId}
-                  onChange={(e) => setSelectedUserId(e.target.value)}
+                  onChange={(userId) => setSelectedUserId(userId)}
+                  users={users}
                   disabled={isAnonymous}
-                  className="w-full px-3 py-2 theme-input rounded-md text-sm"
-                >
-                  <option value="">选择用户</option>
-                  {users.map(u => (
-                    <option key={u.id} value={u.id}>{u.username}</option>
-                  ))}
-                </select>
+                  placeholder="搜索或选择用户"
+                  className="text-sm"
+                />
               )}
             </div>
           </div>

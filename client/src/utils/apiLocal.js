@@ -146,7 +146,8 @@ const api = {
           rank,
           title,
           identity,
-          images: typeof reply.images === 'string' ? JSON.parse(reply.images || '[]') : (reply.images || [])
+          images: typeof reply.images === 'string' ? JSON.parse(reply.images || '[]') : (reply.images || []),
+          quoted_reply: reply.quoted_reply || null // 保留引用回复信息
         };
       });
       
@@ -488,6 +489,11 @@ const api = {
         replyData.custom_username = data.username; // 保存自定义用户名
       }
       
+      // 如果有引用回复，保存引用信息
+      if (data.quoted_reply) {
+        replyData.quoted_reply = data.quoted_reply;
+      }
+      
       const reply = storage.saveReply(replyData);
       
       // 关联用户信息返回
@@ -534,7 +540,8 @@ const api = {
         rank: replyRank,
         title: replyTitle,
         identity: replyIdentity,
-        images: Array.isArray(reply.images) ? reply.images : JSON.parse(reply.images || '[]')
+        images: Array.isArray(reply.images) ? reply.images : JSON.parse(reply.images || '[]'),
+        quoted_reply: reply.quoted_reply || null // 保留引用回复信息
       }, 201);
     }
     

@@ -13,9 +13,10 @@ export const formatRuneterraTime = (dateString, customTime = null) => {
       const formattedYear = parseInt(year) < 10 ? year.padStart(2, '0') : year;
       return `瓦罗兰历 ${formattedYear}-${month}-${day} ${timePart}`;
     }
-    // 如果包含"瓦罗兰历"或"瓦罗兰纪元"前缀，直接返回
-    if (customTime.includes('瓦罗兰历') || customTime.includes('瓦罗兰纪元')) {
-      return customTime;
+    // 如果包含"AN"或"瓦罗兰历"或"瓦罗兰纪元"前缀，直接返回（兼容旧数据）
+    if (customTime.includes('AN') || customTime.includes('瓦罗兰历') || customTime.includes('瓦罗兰纪元')) {
+      // 将AN格式转换为瓦罗兰历格式
+      return customTime.replace(/AN/g, '瓦罗兰历');
     }
     // 否则尝试解析为 YYYY-MM-DD HH:mm 格式
     return `瓦罗兰历 ${customTime}`;
