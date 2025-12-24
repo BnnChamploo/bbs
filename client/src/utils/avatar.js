@@ -28,7 +28,8 @@ function getAvatarUrls(avatar) {
     }
     
     // 不带扩展名，返回所有可能的扩展名（按优先级）
-    const extensions = ['.jpeg', '.jpg', '.png', '.webp'];
+    // 优先尝试 .jpg（更常见），然后 .jpeg, .png, .webp
+    const extensions = ['.jpg', '.jpeg', '.png', '.webp'];
     return extensions.map(ext => parts.slice(0, -1).join('/') + '/' + encodedBaseName + ext);
   }
   
