@@ -168,14 +168,11 @@ export const heroes = [
 ];
 
 // 获取英雄头像路径
-// 支持多种格式：avatar/英雄名.png, avatar/英雄名.jpg, avatar/英雄英文名.png 等
+// 返回不带扩展名的路径，让 getAvatarUrl 尝试多种扩展名（.jpg, .jpeg, .png, .webp）
 function getHeroAvatarPath(hero) {
-  // 优先尝试中文名（因为用户可能使用中文名作为文件名）
-  // 尝试多种可能的文件名格式和扩展名
-  // 格式：avatar/阿狸.jpg 或 avatar/阿狸.png 或 avatar/Ahri.png 等
-  // 注意：实际文件可能使用 .jpg 或 .png，这里先返回中文名 + .jpg
-  // 如果文件不存在，getAvatarUrl 会处理并显示占位符
-  return `avatar/${hero.cnName}.jpg`;
+  // 返回 avatar/英雄名（不带扩展名）
+  // getAvatarUrl 会自动尝试 .jpg, .jpeg, .png, .webp 等格式
+  return `avatar/${hero.cnName}`;
 }
 
 // 初始化英雄用户数据（用于选择角色）
