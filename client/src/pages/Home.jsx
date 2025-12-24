@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import { formatRuneterraTime } from '../utils/runeterraTime';
 import { getAvatarUrl } from '../utils/avatar';
+import AvatarImage from '../components/AvatarImage';
 import { CATEGORIES } from '../data/categories';
 
 const Home = () => {
@@ -163,9 +164,9 @@ const Home = () => {
                   <p className="theme-text-secondary mb-3 md:mb-4 line-clamp-2 text-sm md:text-base">{stripHtml(post.content)}</p>
                   <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm theme-text-muted">
                     <div className="flex items-center space-x-2">
-                      {getAvatarUrl(post.avatar) ? (
-                        <img
-                          src={getAvatarUrl(post.avatar)}
+                      <div className="relative w-5 h-5 md:w-6 md:h-6">
+                        <AvatarImage
+                          avatar={post.avatar}
                           alt={post.username}
                           className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-runeterra-gold theme-avatar-bg object-cover"
                           onError={(e) => {
@@ -174,9 +175,9 @@ const Home = () => {
                             if (fallback) fallback.style.display = 'flex';
                           }}
                         />
-                      ) : null}
-                      <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full border border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-xs font-bold ${getAvatarUrl(post.avatar) ? 'hidden' : ''}`}>
-                        {post.username?.[0]?.toUpperCase() || '?'}
+                        <div className={`absolute inset-0 w-5 h-5 md:w-6 md:h-6 rounded-full border border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-xs font-bold ${getAvatarUrl(post.avatar) ? 'hidden' : ''}`}>
+                          {post.username?.[0]?.toUpperCase() || '?'}
+                        </div>
                       </div>
                       <span className="text-runeterra-gold">{post.username || '匿名用户'}</span>
                       {post.user_title && (

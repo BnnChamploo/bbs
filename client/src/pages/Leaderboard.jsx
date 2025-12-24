@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import { getAvatarUrl } from '../utils/avatar';
+import AvatarImage from '../components/AvatarImage';
 
 const Leaderboard = () => {
   const [users, setUsers] = useState([]);
@@ -55,9 +56,9 @@ const Leaderboard = () => {
                 <div className="w-12 text-center text-2xl font-bold text-runeterra-gold">
                   {getRankIcon(index)}
                 </div>
-                {getAvatarUrl(user.avatar) ? (
-                  <img
-                    src={getAvatarUrl(user.avatar)}
+                <div className="relative w-12 h-12">
+                  <AvatarImage
+                    avatar={user.avatar}
                     alt={user.username}
                     className="w-12 h-12 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
                     onError={(e) => {
@@ -66,9 +67,9 @@ const Leaderboard = () => {
                       if (fallback) fallback.style.display = 'flex';
                     }}
                   />
-                ) : null}
-                <div className={`w-12 h-12 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-sm font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
-                  {user.username?.[0]?.toUpperCase() || '?'}
+                  <div className={`absolute inset-0 w-12 h-12 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-sm font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
+                    {user.username?.[0]?.toUpperCase() || '?'}
+                  </div>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">

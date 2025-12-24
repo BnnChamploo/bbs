@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import api from '../utils/api';
 import { clearPostsData, getDataStats } from '../utils/localStorage';
 import { getAvatarUrl } from '../utils/avatar';
+import AvatarImage from '../components/AvatarImage';
 
 const Profile = ({ user, onUpdate }) => {
   const [username, setUsername] = useState(user.username);
@@ -90,9 +91,9 @@ const Profile = ({ user, onUpdate }) => {
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
             <div className="relative">
-              {(avatarPreview || getAvatarUrl(avatar)) ? (
+              {avatarPreview ? (
                 <img
-                  src={avatarPreview || getAvatarUrl(avatar)}
+                  src={avatarPreview}
                   alt={username}
                   className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg object-cover"
                   onError={(e) => {
@@ -101,8 +102,19 @@ const Profile = ({ user, onUpdate }) => {
                     if (fallback) fallback.style.display = 'flex';
                   }}
                 />
-              ) : null}
-              <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-xl md:text-2xl font-bold ${(avatarPreview || getAvatarUrl(avatar)) ? 'hidden' : ''}`}>
+              ) : (
+                <AvatarImage
+                  avatar={avatar}
+                  alt={username}
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg object-cover"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    const fallback = e.target.nextElementSibling;
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+              )}
+              <div className={`absolute inset-0 w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-xl md:text-2xl font-bold ${(avatarPreview || getAvatarUrl(avatar)) ? 'hidden' : ''}`}>
                 {username?.[0]?.toUpperCase() || '?'}
               </div>
               <button

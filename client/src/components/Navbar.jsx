@@ -4,6 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { getAvatarUrl } from '../utils/avatar';
 import api from '../utils/api';
 import { CATEGORIES } from '../data/categories';
+import AvatarImage from './AvatarImage';
 
 const Navbar = ({ user, onLogout }) => {
   const location = useLocation();
@@ -326,18 +327,16 @@ const Navbar = ({ user, onLogout }) => {
                       className="flex items-center space-x-2 theme-nav-link hover:text-runeterra-gold transition-colors"
                     >
                       <div className="relative w-8 h-8">
-                        {getAvatarUrl(user.avatar) ? (
-                          <img
-                            src={getAvatarUrl(user.avatar)}
-                            alt={user.username}
-                            className="w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              const fallback = e.target.nextElementSibling;
-                              if (fallback) fallback.style.display = 'flex';
-                            }}
-                          />
-                        ) : null}
+                        <AvatarImage
+                          avatar={user.avatar}
+                          alt={user.username}
+                          className="w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            const fallback = e.target.nextElementSibling;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
                         <div className={`absolute inset-0 w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-sm font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
                           {user.username?.[0]?.toUpperCase() || '?'}
                         </div>
@@ -376,18 +375,16 @@ const Navbar = ({ user, onLogout }) => {
                   aria-label="用户菜单"
                 >
                   <div className="relative w-8 h-8">
-                    {getAvatarUrl(user.avatar) ? (
-                      <img
-                        src={getAvatarUrl(user.avatar)}
-                        alt={user.username}
-                        className="w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          const fallback = e.target.nextElementSibling;
-                          if (fallback) fallback.style.display = 'flex';
-                        }}
-                      />
-                    ) : null}
+                    <AvatarImage
+                      avatar={user.avatar}
+                      alt={user.username}
+                      className="w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        const fallback = e.target.nextElementSibling;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
                     <div className={`absolute inset-0 w-8 h-8 rounded-full border-2 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-sm font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
                       {user.username?.[0]?.toUpperCase() || '?'}
                     </div>
@@ -502,18 +499,16 @@ const Navbar = ({ user, onLogout }) => {
                 {/* 头像居中大图 */}
                 <div className="flex justify-center mb-4">
                   <div className="relative w-24 h-24">
-                    {getAvatarUrl(user.avatar) ? (
-                      <img
-                        src={getAvatarUrl(user.avatar)}
-                        alt={user.username}
-                        className="w-24 h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg object-cover"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          const fallback = e.target.nextElementSibling;
-                          if (fallback) fallback.style.display = 'flex';
-                        }}
-                      />
-                    ) : null}
+                    <AvatarImage
+                      avatar={user.avatar}
+                      alt={user.username}
+                      className="w-24 h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        const fallback = e.target.nextElementSibling;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
                     <div className={`absolute inset-0 w-24 h-24 rounded-full border-4 border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-3xl font-bold ${getAvatarUrl(user.avatar) ? 'hidden' : ''}`}>
                       {user.username?.[0]?.toUpperCase() || '?'}
                     </div>

@@ -11,6 +11,7 @@ import { getAvatarUrl } from '../utils/avatar';
 import { getImageUrl } from '../utils/image';
 import { formatContentWithMentions } from '../utils/formatContent';
 import SearchableUserSelect from '../components/SearchableUserSelect';
+import AvatarImage from '../components/AvatarImage';
 
 // 可拖拽的回复项组件
 const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, regions, onReplyToFloor, postAuthorId, postAuthorUsername }) => {
@@ -263,18 +264,16 @@ const SortableReplyItem = ({ reply, index, isEditMode, onEdit, onDelete, users, 
     <div ref={setNodeRef} style={style} className="border-b border-gray-700 pb-3 md:pb-4 mb-3 md:mb-4 last:border-0">
       <div className="flex items-start space-x-2 md:space-x-3">
         <div className="relative w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
-          {getAvatarUrl(reply.avatar) ? (
-            <img
-              src={getAvatarUrl(reply.avatar)}
-              alt={reply.username}
-              className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-runeterra-gold theme-avatar-bg object-cover"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                const fallback = e.target.nextElementSibling;
-                if (fallback) fallback.style.display = 'flex';
-              }}
-            />
-          ) : null}
+          <AvatarImage
+            avatar={reply.avatar}
+            alt={reply.username}
+            className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-runeterra-gold theme-avatar-bg object-cover"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              const fallback = e.target.nextElementSibling;
+              if (fallback) fallback.style.display = 'flex';
+            }}
+          />
           <div className={`absolute inset-0 w-8 h-8 md:w-10 md:h-10 rounded-full border border-runeterra-gold theme-avatar-bg flex items-center justify-center text-runeterra-gold text-xs md:text-sm font-bold ${getAvatarUrl(reply.avatar) ? 'hidden' : ''}`}>
             {reply.username?.[0]?.toUpperCase() || '?'}
           </div>
@@ -898,18 +897,16 @@ const PostDetail = ({ user }) => {
             <div className="flex items-center flex-wrap gap-2 mb-3 md:mb-4 text-xs sm:text-sm">
               <div className="flex items-center space-x-2">
                 <div className="relative w-6 h-6 md:w-8 md:h-8">
-                  {getAvatarUrl(post.avatar) ? (
-                    <img
-                      src={getAvatarUrl(post.avatar)}
-                      alt={post.username}
-                      className="w-6 h-6 md:w-8 md:h-8 rounded-full border border-runeterra-gold bg-gray-700 object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        const fallback = e.target.nextElementSibling;
-                        if (fallback) fallback.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
+                  <AvatarImage
+                    avatar={post.avatar}
+                    alt={post.username}
+                    className="w-6 h-6 md:w-8 md:h-8 rounded-full border border-runeterra-gold bg-gray-700 object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      const fallback = e.target.nextElementSibling;
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
+                  />
                   <div className={`absolute inset-0 w-6 h-6 md:w-8 md:h-8 rounded-full border border-runeterra-gold bg-gray-700 flex items-center justify-center text-runeterra-gold text-xs font-bold ${getAvatarUrl(post.avatar) ? 'hidden' : ''}`}>
                     {post.username?.[0]?.toUpperCase() || '?'}
                   </div>
