@@ -961,7 +961,7 @@ const PostDetail = ({ user }) => {
 
       <div className="theme-card rounded-lg p-4 md:p-6 border border-runeterra-gold/20 mb-4 md:mb-6">
         <h2 className="text-lg md:text-xl font-bold text-runeterra-gold mb-3 md:mb-4">
-          回复 ({displayReplies.length})
+          回复 ({post.replies_count !== undefined ? post.replies_count : displayReplies.length})
         </h2>
 
         {displayReplies.length === 0 ? (
